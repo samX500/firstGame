@@ -4,7 +4,7 @@ import environement.Field;
 
 public class Characters
 {
-
+	//TODO I don't know what I am doing
 	private static final String DEFAULT_NAME = "Farmer";
 	private static final int DEFAULT_RANGE = 2;
 	private static final int DEFAULT_SPEED = 2;
