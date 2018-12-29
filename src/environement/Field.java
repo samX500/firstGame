@@ -1,5 +1,7 @@
 package environement;
 
+import character.Characters;
+
 public class Field
 {
 
@@ -8,11 +10,11 @@ public class Field
 	public static final int MIN_LENGHT = 15;
 	public static final int MAX_LENGHT = 100;
 
-	private int lenght;
+	private static int lenght;
 
 	public Field()
 	{
-		lenght = (int)(Math.random()*(MAX_LENGHT-MIN_LENGHT+1)+MIN_LENGHT);
+		lenght = (int) (Math.random() * (MAX_LENGHT - MIN_LENGHT + 1) + MIN_LENGHT);
 	}
 
 	public Field(int pLenght)
@@ -41,12 +43,18 @@ public class Field
 
 	private boolean validateLenght(int pLenght)
 	{
-		return pLenght > MIN_LENGHT && pLenght < MAX_LENGHT;
+		return pLenght > MIN_LENGHT && pLenght <= MAX_LENGHT;
 	}
 	
+	public static boolean validatePosition(int pPosition)
+	{
+		return pPosition >= 0 && pPosition <= lenght;
+	}
+
+	@Override
 	public String toString()
 	{
-		//TODO might change this later
+		// TODO might change this later
 		return "The field size is: " + lenght;
 	}
 }
