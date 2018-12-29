@@ -30,26 +30,20 @@ public class Application
 		playerList.add(player1);
 		playerList.add(player2);
 
-		int rotate = 0;
+		boolean rotate = true;
+		int value;
 		while (!player1.die() && !player2.die())
 		{
-			//TODO this can probably be done cleaner
-			if (playerList.get(rotate) == player1 || isPlayer)
+			value = rotate? 0:1;
+			if (playerList.get(value) == player1 || isPlayer)
 			{
-				takeTurn(playerList.get(rotate), true);
+				takeTurn(playerList.get(value), true);
 			} else
 			{
-				takeTurn(playerList.get(rotate), false);
-			}
-			// TODO this looks like fucking garbage
-			if (rotate == 0)
-			{
-				rotate = 1;
-			} else if (rotate == 1)
-			{
-				rotate = 0;
+				takeTurn(playerList.get(value), false);
 			}
 
+			rotate = !rotate;
 		}
 
 		String player;

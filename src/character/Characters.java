@@ -230,25 +230,26 @@ public class Characters
 		// TODO I might want to make a method to evaluate if characters are facing each
 		// other
 		boolean isHit = false;
-		int direction = -1;
-		if(facingRight)
-		{
-			direction = 1;
-		}
-	
-		if (position > currentCharacter.getPosition() && facingRight)
-		{
-			direction = -1;
-		} else if (position < currentCharacter.getPosition() && !facingRight)
-		{
-			direction = 1;
-		}
-		if (position == currentCharacter.getPosition())
-		{
-			isHit = true;
-		}
+//		int direction = -1;
+//		if(facingRight)
+//		{
+//			direction = 1;
+//		}
+//	
+//		if (position > currentCharacter.getPosition() && facingRight)
+//		{
+//			direction = -1;
+//		} else if (position < currentCharacter.getPosition() && !facingRight)
+//		{
+//			direction = 1;
+//		}
+//		if (position == currentCharacter.getPosition())
+//		{
+//			isHit = true;
+//		}
 
-		if (position + (range * direction) >= currentCharacter.getPosition())
+		//TODO on second thougth I don't think this works
+		if (position + range >= currentCharacter.getPosition() || position - range <= currentCharacter.getPosition())
 		{
 			isHit = true;
 		}
