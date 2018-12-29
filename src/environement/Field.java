@@ -7,7 +7,7 @@ public class Field
 
 	private static int DEFAULT_LENGHT = 25;
 
-	public static final int MIN_LENGHT = 15;
+	public static final int MIN_LENGHT = 5;
 	public static final int MAX_LENGHT = 100;
 
 	private static int lenght;
@@ -43,7 +43,7 @@ public class Field
 
 	private boolean validateLenght(int pLenght)
 	{
-		return pLenght > MIN_LENGHT && pLenght <= MAX_LENGHT;
+		return pLenght >= MIN_LENGHT && pLenght <= MAX_LENGHT;
 	}
 	
 	public static boolean validatePosition(int pPosition)

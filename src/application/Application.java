@@ -34,7 +34,7 @@ public class Application
 		int value;
 		while (!player1.die() && !player2.die())
 		{
-			value = rotate? 0:1;
+			value = rotate ? 0 : 1;
 			if (playerList.get(value) == player1 || isPlayer)
 			{
 				takeTurn(playerList.get(value), true);
@@ -68,7 +68,7 @@ public class Application
 		do
 		{
 			fieldLenght = Integer
-					.parseInt(Input.askInt("What field lenght do you want to play on? (lenght between 15 and 100)"));
+					.parseInt(Input.askInt("What field lenght do you want to play on? (lenght between 5 and 100)"));
 		} while (fieldLenght < Field.MIN_LENGHT || fieldLenght > Field.MAX_LENGHT);
 		return new Field(fieldLenght);
 	}
@@ -90,7 +90,6 @@ public class Application
 		int choose;
 		int startingPosition;
 		String player;
-		// TODO merge list and object creation if I don't need the object name
 		ArrayList<Characters> characterList = new ArrayList<>();
 		if (isFirst)
 		{
@@ -111,13 +110,18 @@ public class Application
 		characterList.add(bow);
 		characterList.add(assasin);
 		characterList.add(shield);
+		String choice = "";
 		if (isPlayer)
 		{
-			choose = Integer.parseInt(Input.askInt(player + " choose your character\n\n1: " + sword + "\n\n2: " + lance
-					+ "\n\n3: " + bow + "\n\n4: " + assasin + "\n\n5: " + shield));
+			for (int i = 0; i < characterList.size(); i++)
+			{
+				choice += "\n\n" + (i+1) + ": " + characterList.get(i);
+			}
+			choose = Integer.parseInt(Input.askInt(player + " choose your character" + choice));
 		} else
 		{
-			choose = (int) (Math.random() * (characterList.size() + 1));
+			choose = (int) (Math.random() * (characterList.size()) + 1);
+			Output.message("The AI chose the character " + characterList.get(choose - 1));
 		}
 		return characterList.get(choose - 1);
 	}
@@ -131,20 +135,20 @@ public class Application
 		{
 			player = "Player 1 ";
 		}
-		if(!isPlayer)
+		if (!isPlayer)
 		{
 			move = aiTurn(currentCharacter, otherCharacter);
-		}
-		else
+		} else
 		{
-		do
-		{
-			move = Integer.parseInt(Input.askInt(player
-					+ "choose your move\n1: Move forward   2: Move backward   3: Attack\n\nPlayer 1 health: "
-					+ player1.getHealth() + "   Player 2 health:" + player2.getHealth() + "\n\nPlayer 1 range: "
-					+ player1.getRange() + "   Player 2 range: " + player2.getRange() + "\nThe distance between you is "
-					+ currentCharacter.getDistance(otherCharacter) + "\n" + currentField()));
-		} while (move <= 1 && move >= 3);
+			do
+			{
+				move = Integer.parseInt(Input.askInt(
+						player + "choose your move\n1: Move forward   2: Move backward   3: Attack\n\nPlayer 1 health: "
+								+ player1.getHealth() + "   Player 2 health:" + player2.getHealth()
+								+ "\n\nPlayer 1 range: " + player1.getRange() + "   Player 2 range: "
+								+ player2.getRange() + "\nThe distance between you is "
+								+ currentCharacter.getDistance(otherCharacter) + "\n" + currentField()));
+			} while (move <= 1 && move >= 3);
 		}
 		switch (move)
 		{
@@ -177,12 +181,15 @@ public class Application
 		String currentField = "";
 		for (int i = 0; i <= playField.getLenght(); i++)
 		{
-			if (i == player1.getPosition())
+			if (i == player1.getPosition() && i == player2.getPosition())
 			{
-				currentField += "1";
+				currentField += "12";
+			} else if (i == player1.getPosition())
+			{
+				currentField += "1_ ";
 			} else if (i == player2.getPosition())
 			{
-				currentField += "2";
+				currentField += " 2 ";
 			} else
 			{
 				currentField += "_ ";
@@ -190,12 +197,38 @@ public class Application
 		}
 		return currentField;
 	}
+
 	public static int aiTurn(Characters currentCharacter, Characters otherCharacter)
 	{
-		//TODO
-		
-		int move = 1;
-		
+		//TODO better AI
+		int move;
+		if (currentCharacter.attackHit(otherCharacter.getPosition()))
+		{
+			move = 3;
+		} else if (otherCharacter.attackHit(currentCharacter.getPosition())
+				&& !otherCharacter.attackHit(currentCharacter.getPosition() - currentCharacter.getSpeed()))
+		{
+			move = 2;
+
+		}
+
+		else if (!currentCharacter.attackHit(otherCharacter.getPosition())
+				&& !otherCharacter.attackHit(currentCharacter.getPosition() + currentCharacter.getSpeed()))
+		{
+			move = 1;
+		} else if (otherCharacter.attackHit(currentCharacter.getPosition())
+				&& !otherCharacter.attackHit(currentCharacter.getPosition() + currentCharacter.getSpeed()))
+		{
+			move = 1;
+		} else if (otherCharacter.attackHit(currentCharacter.getPosition())
+				&& otherCharacter.attackHit(currentCharacter.getPosition() + currentCharacter.getSpeed()))
+		{
+			move = 1;
+		} else
+		{
+			move = 3;
+		}
+
 		return move;
 	}
 

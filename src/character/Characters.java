@@ -219,40 +219,20 @@ public class Characters
 	public void attack(Characters currentCharacter)
 	{
 
-		if (attackHit(currentCharacter))
+		if (attackHit(currentCharacter.getPosition()))
 		{
 			currentCharacter.takeDamage(currentCharacter.getHealth() - damage);
 		}
 	}
 
-	public boolean attackHit(Characters currentCharacter)
+	public boolean attackHit(int pPosition)
 	{
-		// TODO I might want to make a method to evaluate if characters are facing each
-		// other
 		boolean isHit = false;
-//		int direction = -1;
-//		if(facingRight)
-//		{
-//			direction = 1;
-//		}
-//	
-//		if (position > currentCharacter.getPosition() && facingRight)
-//		{
-//			direction = -1;
-//		} else if (position < currentCharacter.getPosition() && !facingRight)
-//		{
-//			direction = 1;
-//		}
-//		if (position == currentCharacter.getPosition())
-//		{
-//			isHit = true;
-//		}
-
-		//TODO on second thougth I don't think this works
-		if (position + range >= currentCharacter.getPosition() || position - range <= currentCharacter.getPosition())
+		if ((position + range >= pPosition && position <= pPosition)
+				|| (position - range <= pPosition && position >= pPosition))
 		{
 			isHit = true;
-		}
+		} 
 
 		return isHit;
 	}
@@ -266,6 +246,7 @@ public class Characters
 		}
 		return distance;
 	}
+
 	public boolean die()
 	{
 		return health <= 0;
