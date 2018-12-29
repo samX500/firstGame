@@ -3,7 +3,9 @@ package application;
 import java.util.ArrayList;
 
 import character.Characters;
+import character.Status;
 import environement.Field;
+import environement.TurnManagement;
 import playerInteraction.Input;
 import playerInteraction.Output;
 
@@ -58,7 +60,7 @@ public class Application
 			winningPlayer = player1;
 		}
 		Output.message(player + " has won with the " + winningPlayer.getName() + " with " + winningPlayer.getHealth()
-				+ " health remaining!");
+				+ " health and " + winningPlayer.getArmor() + " armor remaining!");
 
 	}
 
@@ -100,22 +102,19 @@ public class Application
 			startingPosition = playField.getLenght();
 			player = "Player 2";
 		}
-		Characters sword = new Characters("Swordsman", 2, 4, startingPosition, 25, 10, isFirst);
-		Characters lance = new Characters("Lanceman", 5, 2, startingPosition, 25, 10, isFirst);
-		Characters bow = new Characters("Archer", 10, 1, startingPosition, 25, 8, isFirst);
-		Characters assasin = new Characters("Assasin", 1, 8, startingPosition, 20, 20, isFirst);
-		Characters shield = new Characters("Shieldman", 2, 1, startingPosition, 50, 5, isFirst);
-		characterList.add(sword);
-		characterList.add(lance);
-		characterList.add(bow);
-		characterList.add(assasin);
-		characterList.add(shield);
+		// name,range,speed,maxhealth,healing,armor,damage,facing,position,health,status
+		characterList.add(new Characters("Swordsman", 2, 4, 25, 5, 10, 10, isFirst, startingPosition));
+		characterList.add(new Characters("Lanceman", 5, 2, 25, 5, 10, 10, isFirst, startingPosition));
+		characterList.add(new Characters("Archer", 10, 1, 25, 5, 5, 10, isFirst, startingPosition));
+		characterList.add(new Characters("Assasin", 1, 8, 20, 0, 0, 20, isFirst, startingPosition));
+		characterList.add(new Characters("Shieldman", 2, 1, 30, 5, 30, 10, isFirst, startingPosition));
+		characterList.add(new Characters("Doctor", 2, 3, 30, 15, 5, 5, isFirst, startingPosition));
 		String choice = "";
 		if (isPlayer)
 		{
 			for (int i = 0; i < characterList.size(); i++)
 			{
-				choice += "\n\n" + (i+1) + ": " + characterList.get(i);
+				choice += "\n\n" + (i + 1) + ": " + characterList.get(i);
 			}
 			choose = Integer.parseInt(Input.askInt(player + " choose your character" + choice));
 		} else
@@ -128,6 +127,12 @@ public class Application
 
 	public static void takeTurn(Characters currentCharacter, boolean isPlayer)
 	{
+		String message1;
+		String message2;
+		String message3;
+		String message4;
+		String message5;
+		String canHeal;
 		int move;
 		String player = "Player 2 ";
 		Characters otherCharacter = findOtherCharacter(currentCharacter);
@@ -142,15 +147,46 @@ public class Application
 		{
 			do
 			{
-				move = Integer.parseInt(Input.askInt(
-						player + "choose your move\n1: Move forward   2: Move backward   3: Attack\n\nPlayer 1 health: "
-								+ player1.getHealth() + "   Player 2 health:" + player2.getHealth()
-								+ "\n\nPlayer 1 range: " + player1.getRange() + "   Player 2 range: "
-								+ player2.getRange() + "\nThe distance between you is "
-								+ currentCharacter.getDistance(otherCharacter) + "\n" + currentField()));
-			} while (move <= 1 && move >= 3);
+				if (TurnManagement.canHeal(currentCharacter.getFacing()))
+				{
+					canHeal = "can heal";
+				} else
+				{
+					canHeal = "can't heal";
+				}
+				message1 = "Turn " + TurnManagement.getTurn() + " " + player + "choose your move\n";
+				message2 = "1: Move forward   2: Move backward   3: Attack    4: Heal   5: Block\n\n";
+				message3 = "Player 1 Health: " + player1.getHealth() + " Armor: " + player1.getArmor()
+						+ "   Player 2 Health: " + player2.getHealth() + " Armor:     " + player2.getArmor();
+				message4 = "\n\n" + player + canHeal;
+				message5 = "\n\nPlayer 1: " + player1 + "\n\nPlayer 2: " + player2 + "\n\nThe distance between you is "
+						+ currentCharacter.getDistance(otherCharacter);
+				
+				move = Integer.parseInt(
+						Input.askInt(message1 + message2 + message3 + message4 + message5 + "\n" + currentField()));
+			} while (move <= 1 && move >= 5);
+			
+			//TODO I may want to put the remove status before the newTurn();
+			TurnManagement.newTurn();
+			//TODO how the fuck I am removing status
+			for(int i = 1; i < Status.values().length; i++)
+			{
+				if(currentCharacter.getStatus(character.Status.values()[i]))
+				{
+					if(TurnManagement.statusEnd(character.Status.values()[i]))
+					{
+						currentCharacter.removeStatus(character.Status.values()[i]);
+					}
+				}
+			}
 		}
-		switch (move)
+		takeAction(currentCharacter, move);
+	}
+
+	public static void takeAction(Characters currentCharacter, int pMove)
+	{
+
+		switch (pMove)
 		{
 		case 1:
 			currentCharacter.moveForward(currentCharacter.getFacing());
@@ -159,7 +195,14 @@ public class Application
 			currentCharacter.moveBackward(currentCharacter.getFacing());
 			break;
 		case 3:
-			currentCharacter.attack(otherCharacter);
+			currentCharacter.attack(findOtherCharacter(currentCharacter));
+			break;
+		case 4:
+			currentCharacter.heals();
+			break;
+		case 5:
+			currentCharacter.block();
+			break;
 		}
 	}
 
@@ -198,9 +241,11 @@ public class Application
 		return currentField;
 	}
 
+	// TODO I am not sure if I should do that
+
 	public static int aiTurn(Characters currentCharacter, Characters otherCharacter)
 	{
-		//TODO better AI
+		// TODO better AI
 		int move;
 		if (currentCharacter.attackHit(otherCharacter.getPosition()))
 		{
@@ -234,6 +279,7 @@ public class Application
 
 	public static void main(String[] args)
 	{
+		Application a = new Application();
 		play();
 	}
 
