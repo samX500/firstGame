@@ -4,11 +4,11 @@ import javax.swing.JOptionPane;
 
 public class Input
 {
-	public static String askInt(String pQuestion)
+	public static int askInt(String pQuestion)
 	{
 		//TODO add condition
-		String answer = "";
-		answer = JOptionPane.showInputDialog(null, pQuestion);
+		int answer;
+		answer = Integer.parseInt(JOptionPane.showInputDialog(null, pQuestion));
 		return answer;
 	}
 }

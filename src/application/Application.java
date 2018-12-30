@@ -6,19 +6,29 @@ import character.Characters;
 import character.Status;
 import character.StatusInfo;
 import environement.Field;
+import environement.Obstacle;
 import environement.TurnManagement;
 import playerInteraction.Input;
 import playerInteraction.Output;
 
 public class Application
 {
+	public static final double OBSTACLE_RATIO = (0.2);
+
 	static Characters player1 = null;
 	static Characters player2 = null;
 	static Field playField = null;
+	static ArrayList<Obstacle> obstacle = new ArrayList<>();
+	static boolean isObstacle = true;
 
 	public static void play()
 	{
 		playField = createField();
+		obstacle = createObstacle();
+		if (obstacle == null)
+		{
+			isObstacle = false;
+		}
 		int numberOfPlayer = numberPlayer();
 		boolean isPlayer = false;
 		if (numberOfPlayer == 2)
@@ -70,10 +80,41 @@ public class Application
 		int fieldLenght;
 		do
 		{
-			fieldLenght = Integer
-					.parseInt(Input.askInt("What field lenght do you want to play on? (lenght between 5 and 100)"));
+			fieldLenght = Input.askInt("What field lenght do you want to play on? (lenght between 5 and 100)");
 		} while (fieldLenght < Field.MIN_LENGHT || fieldLenght > Field.MAX_LENGHT);
+
 		return new Field(fieldLenght);
+	}
+
+	public static ArrayList<Obstacle> createObstacle()
+	{
+		// TODO I need lamba to make this work
+		ArrayList<Obstacle> newObstacle = new ArrayList<>();
+
+		if (Input.askInt("Do you want obstacle on the field? (0 for no,1 for yes)") == 1)
+		{
+			do
+			{
+				ArrayList<Obstacle> obstacleList = new ArrayList<>();
+				obstacleList.add(new Obstacle(1));
+				obstacleList.add(new Obstacle(2));
+				obstacleList.add(new Obstacle(3));
+
+				newObstacle.add(obstacleList.get((int) (Math.random() * (obstacleList.size()))));
+			} while (moreObstacle(newObstacle));
+		}
+		return newObstacle;
+
+	}
+
+	public static boolean moreObstacle(ArrayList<Obstacle> newObstacle)
+	{
+		int sum = 0;
+		for (int i = 0; i < newObstacle.size(); i++)
+		{
+			sum += newObstacle.get(i).getLenght();
+		}
+		return sum < Field.getLenght() * OBSTACLE_RATIO;
 	}
 
 	public static int numberPlayer()
@@ -81,7 +122,7 @@ public class Application
 		int numberOfPlayer = 0;
 		do
 		{
-			numberOfPlayer = Integer.parseInt(Input
+			numberOfPlayer = (Input
 					.askInt("Do you want to play with a friend or against an AI?\n1: With an AI   2: With a friend"));
 
 		} while (numberOfPlayer != 1 && numberOfPlayer != 2);
@@ -100,7 +141,7 @@ public class Application
 			player = "Player 1";
 		} else
 		{
-			startingPosition = playField.getLenght();
+			startingPosition = Field.getLenght();
 			player = "Player 2";
 		}
 		// name,range,speed,maxhealth,healing,armor,damage,facing,position,health,status
@@ -117,7 +158,7 @@ public class Application
 			{
 				choice += "\n\n" + (i + 1) + ": " + characterList.get(i);
 			}
-			choose = Integer.parseInt(Input.askInt(player + " choose your character" + choice));
+			choose = (Input.askInt(player + " choose your character" + choice));
 		} else
 		{
 			choose = (int) (Math.random() * (characterList.size()) + 1);
@@ -145,15 +186,14 @@ public class Application
 			{
 				do
 				{
-					move = Integer.parseInt(Input.askInt(createDisplay(currentCharacter)));
+					move = (Input.askInt(createDisplay(currentCharacter)));
 				} while (move <= 1 && move >= 6);
 			}
-			
-			
+
 		}
 		takeAction(currentCharacter, move);
 		TurnManagement.newTurn();
-		
+
 	}
 
 	public static void takeAction(Characters currentCharacter, int pMove)
@@ -165,30 +205,37 @@ public class Application
 		case 0:
 			break;
 		case 1:
-			currentCharacter.moveForward(currentCharacter.getFacing(),spaceMove(currentCharacter));
+			currentCharacter.moveForward(currentCharacter.getFacing(), spaceMove(currentCharacter));
 			break;
 		case 2:
-			currentCharacter.moveBackward(currentCharacter.getFacing(),spaceMove(currentCharacter));
+			currentCharacter.moveBackward(currentCharacter.getFacing(), spaceMove(currentCharacter));
 			break;
 		case 3:
-			currentCharacter.attack(otherCharacter);
+			// TODO jump, jump will always travel you the whole speed value and let's you
+			// avoid obstacles
 			break;
 		case 4:
-			currentCharacter.heals();
+			currentCharacter.attack(otherCharacter);
 			break;
 		case 5:
-			currentCharacter.block();
+			currentCharacter.heals();
 			break;
 		case 6:
+			currentCharacter.block();
+			break;
+		case 7:
 			currentCharacter.grab(otherCharacter);
+
 		}
 	}
 
 	public static int spaceMove(Characters currentCharacter)
 	{
-		return Integer.parseInt(Input.askInt("How many space do you want to travel?\n\n Your speed is: " + currentCharacter.getSpeed() + "\n\n the distance between you is: " + currentCharacter.getDistance(findOtherCharacter(currentCharacter)) + "\n\n" + currentField()));
+		return (Input.askInt("How many space do you want to travel?\n\n Your speed is: " + currentCharacter.getSpeed()
+				+ "\n\n the distance between you is: "
+				+ currentCharacter.getDistance(findOtherCharacter(currentCharacter)) + "\n\n" + currentField()));
 	}
-	
+
 	public static Characters findOtherCharacter(Characters currentCharacter)
 	{
 		Characters otherCharacter;
@@ -206,7 +253,7 @@ public class Application
 	{
 		String canHeal;
 		String canBlock;
-		
+
 		String player = "Player 2 ";
 		if (currentCharacter == player1)
 		{
@@ -226,23 +273,25 @@ public class Application
 		{
 			canBlock = "can't block";
 		}
-	
+
 		String message1 = "Turn " + TurnManagement.getTurn() + " " + player + "choose your move\n";
 		String message2 = "1: Move forward   2: Move backward   3: Attack    4: Heal   5: Block   6: Grab\n\n";
 		String message3 = "Player 1 Health: " + player1.getHealth() + " Armor: " + player1.getArmor()
 				+ "   Player 2 Health: " + player2.getHealth() + " Armor:     " + player2.getArmor();
 		String message4 = "\n\n" + player + canHeal + "\n" + player + canBlock;
-		String message5 = "\n\nPlayer 1: "+ player1.statusToString() +"   Player 2: " + player2.statusToString();
+		String message5 = "\n\nPlayer 1: " + player1.statusToString() + "   Player 2: " + player2.statusToString();
 		String message6 = "\n\nPlayer 1: " + player1 + "\n\nPlayer 2: " + player2 + "\n\nThe distance between you is "
 				+ currentCharacter.getDistance(findOtherCharacter(currentCharacter));
 
-		return message1 + message2 + message3 + message4 + message5 + message6+ "\n" + currentField();
+		return message1 + message2 + message3 + message4 + message5 + message6 + "\n" + currentField();
 	}
 
 	public static String currentField()
 	{
+		String oldField = "";
 		String currentField = "";
-		for (int i = 0; i <= playField.getLenght(); i++)
+		String obstacleField = "";
+		for (int i = 0; i <= Field.getLenght(); i++)
 		{
 			if (i == player1.getPosition() && i == player2.getPosition())
 			{
@@ -258,7 +307,26 @@ public class Application
 				currentField += "_ ";
 			}
 		}
-		return currentField;
+		if (isObstacle)
+		{
+			for (int i = 0; i <= Field.getLenght(); i++)
+			{
+				oldField = obstacleField;
+				for (int j = 0; j < obstacle.size(); j++)
+				{
+					if (i>= obstacle.get(j).getPosition() && i< obstacle.get(j).getPosition()+obstacle.get(j).getLenght())
+					{
+							obstacleField += "* ";
+					}
+				}
+				if (oldField.equals(obstacleField))
+				{
+					obstacleField += "_ ";
+				}
+
+			}
+		}
+		return currentField + "\n" + obstacleField;
 	}
 
 	public static void updateStatus(Characters currentCharacter)

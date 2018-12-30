@@ -28,12 +28,12 @@ public class Field
 		}
 	}
 
-	public int getLenght()
+	public static int getLenght()
 	{
 		return lenght;
 	}
 
-	public void setLenght(int pLenght)
+	private static void setLenght(int pLenght)
 	{
 		if (validateLenght(pLenght))
 		{
@@ -41,7 +41,7 @@ public class Field
 		}
 	}
 
-	private boolean validateLenght(int pLenght)
+	private static boolean validateLenght(int pLenght)
 	{
 		return pLenght >= MIN_LENGHT && pLenght <= MAX_LENGHT;
 	}
@@ -54,7 +54,6 @@ public class Field
 	@Override
 	public String toString()
 	{
-		// TODO might change this later
 		return "The field size is: " + lenght;
 	}
 }
