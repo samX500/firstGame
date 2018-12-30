@@ -57,6 +57,12 @@ public class Obstacle
 	{
 		return pDamage >= MIN_DAMAGE && pDamage <= MAX_DAMAGE;
 	}
+	
+	public int getDistance(Obstacle otherObstacle)
+	{
+		
+		return Math.abs(position - otherObstacle.getPosition());
+	}
 
 	@Override
 	public String toString()

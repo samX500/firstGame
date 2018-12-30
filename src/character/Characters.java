@@ -444,12 +444,7 @@ public class Characters
 
 	public int getDistance(Characters otherCharacter)
 	{
-		int distance = position - otherCharacter.getPosition();
-		if (distance < 0)
-		{
-			distance *= -1;
-		}
-		return distance;
+		return  Math.abs(position - otherCharacter.getPosition());
 	}
 
 	public boolean die()

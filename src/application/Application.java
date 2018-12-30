@@ -88,23 +88,40 @@ public class Application
 
 	public static ArrayList<Obstacle> createObstacle()
 	{
-		// TODO I need lamba to make this work
-		ArrayList<Obstacle> newObstacle = new ArrayList<>();
+		// TODO I need lambda to make this work
+		// the current obstacles will be removed once I have lambda
+		ArrayList<Obstacle> newObstacle = new ArrayList<>();		
 
 		if (Input.askInt("Do you want obstacle on the field? (0 for no,1 for yes)") == 1)
 		{
 			do
 			{
 				ArrayList<Obstacle> obstacleList = new ArrayList<>();
-				obstacleList.add(new Obstacle(1));
-				obstacleList.add(new Obstacle(2));
-				obstacleList.add(new Obstacle(3));
+				obstacleList.add(obstacleSpacing(1, newObstacle));
+				obstacleList.add(obstacleSpacing(2, newObstacle));
+				obstacleList.add(obstacleSpacing(3, newObstacle));
 
 				newObstacle.add(obstacleList.get((int) (Math.random() * (obstacleList.size()))));
 			} while (moreObstacle(newObstacle));
 		}
 		return newObstacle;
 
+	}
+
+	public static Obstacle obstacleSpacing(double pDamage, ArrayList<Obstacle> obstacleList)
+	{
+		Obstacle newObst = new Obstacle(pDamage);
+	
+			for (int i = 0; i < obstacleList.size(); i++)
+			{
+				while (newObst.getDistance(obstacleList.get(i)) <= 5)
+				{
+					newObst.setPosition();
+					i = 0;
+				} 
+			}
+		
+		return newObst;
 	}
 
 	public static boolean moreObstacle(ArrayList<Obstacle> newObstacle)
@@ -314,9 +331,10 @@ public class Application
 				oldField = obstacleField;
 				for (int j = 0; j < obstacle.size(); j++)
 				{
-					if (i>= obstacle.get(j).getPosition() && i< obstacle.get(j).getPosition()+obstacle.get(j).getLenght())
+					if (i >= obstacle.get(j).getPosition()
+							&& i < obstacle.get(j).getPosition() + obstacle.get(j).getLenght())
 					{
-							obstacleField += "* ";
+						obstacleField += "* ";
 					}
 				}
 				if (oldField.equals(obstacleField))
