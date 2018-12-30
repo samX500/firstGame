@@ -31,7 +31,7 @@ public class Characters
 	private static final double MAX_ARMOR = 100;
 	private static final double MIN_DAMAGE = 1;
 	private static final double MAX_DAMAGE = 200;
-	
+
 	private static final double BURN_DAMAGE = 3;
 	private static final double POIS_DAMAGE = 3;
 
@@ -259,40 +259,42 @@ public class Characters
 	{
 		return status.contains(pStatus);
 	}
+
 	public void setStatus(Status pStatus)
 	{
-		//TODO I will have to test the shit out of this
-		//TODO Status do nothing
+		// TODO I will have to test the shit out of this
+		// TODO Status do nothing
 		status.add(pStatus);
-		if(!noStatus())
+		if (!noStatus())
 		{
 			removeStatus(Status.NO_STATUS);
 		}
 		TurnManagement.statusStart(pStatus);
 	}
-	
+
 	public void removeStatus(Status pStatus)
 	{
 		status.remove(pStatus);
-		if(noStatus())
+		if (noStatus())
 		{
 			setStatus(Status.NO_STATUS);
 		}
-		
+
 	}
 
 	public boolean noStatus()
 	{
 		boolean noStatus = true;
-		for(int i = 1; i < Status.values().length; i++)
+		for (int i = 1; i < Status.values().length; i++)
 		{
-			if(status.contains(Status.values()[i]))
+			if (status.contains(Status.values()[i]))
 			{
 				noStatus = false;
 			}
 		}
 		return noStatus;
 	}
+
 	// Positive value = gain health
 	// Negative value = loose health
 	public void changeHealth(double pHealth)
@@ -336,43 +338,54 @@ public class Characters
 		changeHealth(-remainingDamage);
 	}
 
-	public void moveForward(boolean pFacing)
+	public void moveForward(boolean pFacing, int pMouvement)
 	{
-		int face = -1;
-		if (pFacing)
+		if (validateMouvement(pMouvement))
 		{
-			face = 1;
-		}
-
-		if (Field.validatePosition(position + speed * face))
-		{
-			setPosition(position + (speed * face));
+			int direction = -1;
+			if (pFacing)
+			{
+				direction = 1;
+			}
+			if (Field.validatePosition(position + pMouvement * direction))
+			{
+				setPosition(position + (pMouvement * direction));
+			}
 		}
 	}
 
-	public void moveBackward(boolean pFacing)
+	public void moveBackward(boolean pFacing, int pMouvement)
 	{
-		int direction = 1;
-		if (pFacing)
+		if (validateMouvement(pMouvement))
 		{
-			direction = -1;
-		}
+			int direction = 1;
+			if (pFacing)
+			{
+				direction = -1;
+			}
 
-		if (Field.validatePosition(position + (speed * direction)))
-		{
-			setPosition(position + (speed * direction));
+			if (Field.validatePosition(position + (pMouvement * direction)))
+			{
+				setPosition(position + (pMouvement * direction));
+			}
 		}
 	}
 
-	public void attack(Characters currentCharacter)
+	public boolean validateMouvement(int pMouvement)
 	{
-		if(currentCharacter.getStatus(Status.BLOCKING))
+		return pMouvement >= 0 && pMouvement <= speed;
+	}
+
+	public void attack(Characters otherCharacter)
+	{
+		if (otherCharacter.getStatus(Status.BLOCKING))
 		{
 			setStatus(Status.STUNNED);
-		}		
-		else if (attackHit(currentCharacter.getPosition()))
+			otherCharacter.removeStatus(Status.STUNNED);
+			otherCharacter.removeStatus(Status.BLOCKING);
+		} else if (attackHit(otherCharacter.getPosition()))
 		{
-			currentCharacter.takeDamage(damage);
+			otherCharacter.takeDamage(damage);
 		}
 	}
 
@@ -401,24 +414,37 @@ public class Characters
 	{
 		if (TurnManagement.canBeBlocking(facingRight))
 		{
-			//TODO this is so fucking sloppy
+			// TODO this is so fucking sloppy
 			setStatus(Status.BLOCKING);
+			setStatus(Status.STUNNED);
 		}
 	}
-	
+
+	public void grab(Characters otherCharacter)
+	{
+		if (position == otherCharacter.getPosition())
+		{
+			otherCharacter.setStatus(Status.STUNNED);
+			if (otherCharacter.getStatus(Status.BLOCKING))
+			{
+				otherCharacter.removeStatus(Status.BLOCKING);
+			}
+		}
+	}
+
 	public void poisDamage()
 	{
 		changeHealth(-POIS_DAMAGE);
 	}
-	
+
 	public void burnDamage()
 	{
 		changeHealth(-BURN_DAMAGE);
 	}
 
-	public int getDistance(Characters currentCharacter)
+	public int getDistance(Characters otherCharacter)
 	{
-		int distance = position - currentCharacter.getPosition();
+		int distance = position - otherCharacter.getPosition();
 		if (distance < 0)
 		{
 			distance *= -1;
@@ -434,15 +460,16 @@ public class Characters
 	public String statusToString()
 	{
 		String currentStatus = "";
-		for(int i = 0; i < Status.values().length; i++)
+		for (int i = 0; i < Status.values().length; i++)
 		{
-			if(getStatus(Status.values()[i]))
+			if (getStatus(Status.values()[i]))
 			{
-				currentStatus += StatusInfo.statusString(Status.values()[i])+", ";
+				currentStatus += StatusInfo.statusString(Status.values()[i]) + ", ";
 			}
 		}
 		return currentStatus;
 	}
+
 	public String toString()
 	{
 		// TODO will have to review this later

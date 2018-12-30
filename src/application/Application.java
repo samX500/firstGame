@@ -146,7 +146,7 @@ public class Application
 				do
 				{
 					move = Integer.parseInt(Input.askInt(createDisplay(currentCharacter)));
-				} while (move <= 1 && move >= 5);
+				} while (move <= 1 && move >= 6);
 			}
 			
 			
@@ -159,18 +159,19 @@ public class Application
 	public static void takeAction(Characters currentCharacter, int pMove)
 	{
 
+		Characters otherCharacter = findOtherCharacter(currentCharacter);
 		switch (pMove)
 		{
 		case 0:
 			break;
 		case 1:
-			currentCharacter.moveForward(currentCharacter.getFacing());
+			currentCharacter.moveForward(currentCharacter.getFacing(),spaceMove(currentCharacter));
 			break;
 		case 2:
-			currentCharacter.moveBackward(currentCharacter.getFacing());
+			currentCharacter.moveBackward(currentCharacter.getFacing(),spaceMove(currentCharacter));
 			break;
 		case 3:
-			currentCharacter.attack(findOtherCharacter(currentCharacter));
+			currentCharacter.attack(otherCharacter);
 			break;
 		case 4:
 			currentCharacter.heals();
@@ -178,9 +179,16 @@ public class Application
 		case 5:
 			currentCharacter.block();
 			break;
+		case 6:
+			currentCharacter.grab(otherCharacter);
 		}
 	}
 
+	public static int spaceMove(Characters currentCharacter)
+	{
+		return Integer.parseInt(Input.askInt("How many space do you want to travel?\n\n Your speed is: " + currentCharacter.getSpeed() + "\n\n the distance between you is: " + currentCharacter.getDistance(findOtherCharacter(currentCharacter)) + "\n\n" + currentField()));
+	}
+	
 	public static Characters findOtherCharacter(Characters currentCharacter)
 	{
 		Characters otherCharacter;
@@ -220,15 +228,15 @@ public class Application
 		}
 	
 		String message1 = "Turn " + TurnManagement.getTurn() + " " + player + "choose your move\n";
-		String message2 = "1: Move forward   2: Move backward   3: Attack    4: Heal   5: Block\n\n";
+		String message2 = "1: Move forward   2: Move backward   3: Attack    4: Heal   5: Block   6: Grab\n\n";
 		String message3 = "Player 1 Health: " + player1.getHealth() + " Armor: " + player1.getArmor()
 				+ "   Player 2 Health: " + player2.getHealth() + " Armor:     " + player2.getArmor();
-		String message4 = "\n\n" + player + canHeal + "      " + player + canBlock;
+		String message4 = "\n\n" + player + canHeal + "\n" + player + canBlock;
 		String message5 = "\n\nPlayer 1: "+ player1.statusToString() +"   Player 2: " + player2.statusToString();
 		String message6 = "\n\nPlayer 1: " + player1 + "\n\nPlayer 2: " + player2 + "\n\nThe distance between you is "
 				+ currentCharacter.getDistance(findOtherCharacter(currentCharacter));
 
-		return message1 + message2 + message3 + message4 + message5 + "\n" + currentField();
+		return message1 + message2 + message3 + message4 + message5 + message6+ "\n" + currentField();
 	}
 
 	public static String currentField()

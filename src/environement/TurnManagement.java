@@ -5,8 +5,9 @@ import character.Status;
 
 public class TurnManagement
 {
-	private static final int BLOCK_DURATION = 1;
-	private static final int STUN_DURATION = 3;
+	private static final int BLOCK_DURATION = 3;
+	//TODO maybe this can be an issue
+	private static final int STUN_DURATION = 4;
 	private static final int SLOW_DURATION = 5;
 	private static final int POIS_DURATION = 5;
 	private static final int BURN_DURATION = 5;
