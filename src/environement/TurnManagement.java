@@ -1,14 +1,15 @@
 package environement;
 
+import character.Characters;
 import character.Status;
 
 public class TurnManagement
 {
 	private static final int BLOCK_DURATION = 1;
-	private static final int STUN_DURATION = 1;
-	private static final int SLOW_DURATION = 3;
-	private static final int POIS_DURATION = 3;
-	private static final int BURN_DURATION = 3;
+	private static final int STUN_DURATION = 3;
+	private static final int SLOW_DURATION = 5;
+	private static final int POIS_DURATION = 5;
+	private static final int BURN_DURATION = 5;
 
 	private static int lastHealP1 = -3;
 	private static int lastHealP2 = -3;
@@ -23,7 +24,7 @@ public class TurnManagement
 
 	private static int currentTurn = 1;
 
-	public static boolean getLastHeal(boolean pFacing)
+	public static void setLastHeal(boolean pFacing)
 	{
 		if (pFacing)
 		{
@@ -34,17 +35,21 @@ public class TurnManagement
 			lastHealP2 = currentTurn;
 		}
 
-		return canHeal(pFacing);
-
 	}
 
 	public static boolean canHeal(boolean pFacing)
 	{
-		return pFacing ? currentTurn >= (lastHealP1 + 2) : currentTurn >= (lastHealP2 + 2);
-
+		return pFacing ? currentTurn > (lastHealP1 + 2) : currentTurn > (lastHealP2 + 2);
 	}
 
-	public static boolean getLastBlock(boolean pFacing)
+	public static boolean canBeHealing(boolean pFacing)
+	{
+		boolean canHeal = canHeal(pFacing);
+		setLastHeal(pFacing);
+		return canHeal;
+	}
+
+	public static void setLastBlock(boolean pFacing)
 	{
 		if (pFacing)
 		{
@@ -54,18 +59,27 @@ public class TurnManagement
 		{
 			lastBlockP2 = currentTurn;
 		}
-		return canBlock(pFacing);
+
 	}
 
 	public static boolean canBlock(boolean pFacing)
 	{
-		return pFacing ? currentTurn >= (lastBlockP1 + 2) : currentTurn >= (lastBlockP2 + 2);
+		return pFacing ? currentTurn > (lastBlockP1 + 2) : currentTurn > (lastBlockP2 + 2);
+	}
+
+	public static boolean canBeBlocking(boolean pFacing)
+	{
+		boolean canBlock = canBlock(pFacing);
+		setLastBlock(pFacing);
+		return canBlock;
 	}
 
 	public static void statusStart(Status pStatus)
 	{
 		switch (pStatus)
 		{
+		case NO_STATUS:
+			break;
 		case BLOCKING:
 			blockingTime();
 			break;
@@ -75,7 +89,7 @@ public class TurnManagement
 		case SLOWED:
 			slowTime();
 			break;
-		case POISENED:
+		case POISONED:
 			poisTime();
 			break;
 		case BURNED:
@@ -90,6 +104,8 @@ public class TurnManagement
 		boolean satusEnd = false;
 		switch (pStatus)
 		{
+		case NO_STATUS:
+			break;
 		case BLOCKING:
 			satusEnd = blockOver();
 			break;
@@ -99,7 +115,7 @@ public class TurnManagement
 		case SLOWED:
 			satusEnd = slowOver();
 			break;
-		case POISENED:
+		case POISONED:
 			satusEnd = poisOver();
 			break;
 		case BURNED:
@@ -109,6 +125,28 @@ public class TurnManagement
 		return satusEnd;
 	}
 
+	public static void statusActivate(Status pStatus, Characters currentCharacter)
+	{
+		switch (pStatus)
+		{
+		case NO_STATUS:
+			break;
+		case BLOCKING:
+			break;
+		case STUNNED:
+			break;
+		case SLOWED:
+			//TODO create something that does speed/2
+			break;
+		case POISONED:
+			currentCharacter.poisDamage();
+			break;
+		case BURNED:
+			currentCharacter.burnDamage();
+			break;
+		}
+	}
+
 	private static void blockingTime()
 	{
 		statBlock = currentTurn;
@@ -116,7 +154,7 @@ public class TurnManagement
 
 	private static boolean blockOver()
 	{
-		return currentTurn - statBlock > BLOCK_DURATION;
+		return currentTurn - statBlock >= BLOCK_DURATION;
 	}
 
 	private static void stunTime()
@@ -126,7 +164,7 @@ public class TurnManagement
 
 	private static boolean stunOver()
 	{
-		return currentTurn - statStun > STUN_DURATION;
+		return currentTurn - statStun >= STUN_DURATION;
 	}
 
 	private static void slowTime()
@@ -136,7 +174,7 @@ public class TurnManagement
 
 	private static boolean slowOver()
 	{
-		return currentTurn - statSlow > SLOW_DURATION;
+		return currentTurn - statSlow >= SLOW_DURATION;
 	}
 
 	private static void poisTime()
@@ -146,7 +184,7 @@ public class TurnManagement
 
 	private static boolean poisOver()
 	{
-		return currentTurn - statPois > POIS_DURATION;
+		return currentTurn - statPois >= POIS_DURATION;
 	}
 
 	private static void burnTime()
@@ -156,14 +194,12 @@ public class TurnManagement
 
 	private static boolean burnOver()
 	{
-		return currentTurn - statBurn > BURN_DURATION;
+		return currentTurn - statBurn >= BURN_DURATION;
 	}
 
 	public static void newTurn()
 	{
 		currentTurn++;
-		int debug = currentTurn;
-		int fuck;
 	}
 
 	public static int getTurn()

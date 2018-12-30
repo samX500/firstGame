@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import character.Characters;
 import character.Status;
+import character.StatusInfo;
 import environement.Field;
 import environement.TurnManagement;
 import playerInteraction.Input;
@@ -37,7 +38,7 @@ public class Application
 		while (!player1.die() && !player2.die())
 		{
 			value = rotate ? 0 : 1;
-			if (playerList.get(value) == player1 || isPlayer)
+			if (isPlayer)
 			{
 				takeTurn(playerList.get(value), true);
 			} else
@@ -127,60 +128,32 @@ public class Application
 
 	public static void takeTurn(Characters currentCharacter, boolean isPlayer)
 	{
-		String message1;
-		String message2;
-		String message3;
-		String message4;
-		String message5;
-		String canHeal;
 		int move;
-		String player = "Player 2 ";
 		Characters otherCharacter = findOtherCharacter(currentCharacter);
-		if (currentCharacter == player1)
-		{
-			player = "Player 1 ";
-		}
+
 		if (!isPlayer)
 		{
 			move = aiTurn(currentCharacter, otherCharacter);
 		} else
 		{
-			do
+			updateStatus(currentCharacter);
+
+			if (currentCharacter.getStatus(Status.STUNNED))
 			{
-				if (TurnManagement.canHeal(currentCharacter.getFacing()))
-				{
-					canHeal = "can heal";
-				} else
-				{
-					canHeal = "can't heal";
-				}
-				message1 = "Turn " + TurnManagement.getTurn() + " " + player + "choose your move\n";
-				message2 = "1: Move forward   2: Move backward   3: Attack    4: Heal   5: Block\n\n";
-				message3 = "Player 1 Health: " + player1.getHealth() + " Armor: " + player1.getArmor()
-						+ "   Player 2 Health: " + player2.getHealth() + " Armor:     " + player2.getArmor();
-				message4 = "\n\n" + player + canHeal;
-				message5 = "\n\nPlayer 1: " + player1 + "\n\nPlayer 2: " + player2 + "\n\nThe distance between you is "
-						+ currentCharacter.getDistance(otherCharacter);
-				
-				move = Integer.parseInt(
-						Input.askInt(message1 + message2 + message3 + message4 + message5 + "\n" + currentField()));
-			} while (move <= 1 && move >= 5);
-			
-			//TODO I may want to put the remove status before the newTurn();
-			TurnManagement.newTurn();
-			//TODO how the fuck I am removing status
-			for(int i = 1; i < Status.values().length; i++)
+				move = 0;
+			} else
 			{
-				if(currentCharacter.getStatus(character.Status.values()[i]))
+				do
 				{
-					if(TurnManagement.statusEnd(character.Status.values()[i]))
-					{
-						currentCharacter.removeStatus(character.Status.values()[i]);
-					}
-				}
+					move = Integer.parseInt(Input.askInt(createDisplay(currentCharacter)));
+				} while (move <= 1 && move >= 5);
 			}
+			
+			
 		}
 		takeAction(currentCharacter, move);
+		TurnManagement.newTurn();
+		
 	}
 
 	public static void takeAction(Characters currentCharacter, int pMove)
@@ -188,6 +161,8 @@ public class Application
 
 		switch (pMove)
 		{
+		case 0:
+			break;
 		case 1:
 			currentCharacter.moveForward(currentCharacter.getFacing());
 			break;
@@ -219,6 +194,43 @@ public class Application
 		return otherCharacter;
 	}
 
+	public static String createDisplay(Characters currentCharacter)
+	{
+		String canHeal;
+		String canBlock;
+		
+		String player = "Player 2 ";
+		if (currentCharacter == player1)
+		{
+			player = "Player 1 ";
+		}
+		if (TurnManagement.canHeal(currentCharacter.getFacing()))
+		{
+			canHeal = "can heal";
+		} else
+		{
+			canHeal = "can't heal";
+		}
+		if (TurnManagement.canBlock(currentCharacter.getFacing()))
+		{
+			canBlock = "can block";
+		} else
+		{
+			canBlock = "can't block";
+		}
+	
+		String message1 = "Turn " + TurnManagement.getTurn() + " " + player + "choose your move\n";
+		String message2 = "1: Move forward   2: Move backward   3: Attack    4: Heal   5: Block\n\n";
+		String message3 = "Player 1 Health: " + player1.getHealth() + " Armor: " + player1.getArmor()
+				+ "   Player 2 Health: " + player2.getHealth() + " Armor:     " + player2.getArmor();
+		String message4 = "\n\n" + player + canHeal + "      " + player + canBlock;
+		String message5 = "\n\nPlayer 1: "+ player1.statusToString() +"   Player 2: " + player2.statusToString();
+		String message6 = "\n\nPlayer 1: " + player1 + "\n\nPlayer 2: " + player2 + "\n\nThe distance between you is "
+				+ currentCharacter.getDistance(findOtherCharacter(currentCharacter));
+
+		return message1 + message2 + message3 + message4 + message5 + "\n" + currentField();
+	}
+
 	public static String currentField()
 	{
 		String currentField = "";
@@ -241,7 +253,22 @@ public class Application
 		return currentField;
 	}
 
-	// TODO I am not sure if I should do that
+	public static void updateStatus(Characters currentCharacter)
+	{
+		for (int i = 1; i < Status.values().length; i++)
+		{
+			if (currentCharacter.getStatus(character.Status.values()[i]))
+			{
+				if (TurnManagement.statusEnd(character.Status.values()[i]))
+				{
+					currentCharacter.removeStatus(character.Status.values()[i]);
+				} else
+				{
+					TurnManagement.statusActivate(character.Status.values()[i], currentCharacter);
+				}
+			}
+		}
+	}
 
 	public static int aiTurn(Characters currentCharacter, Characters otherCharacter)
 	{
@@ -279,7 +306,6 @@ public class Application
 
 	public static void main(String[] args)
 	{
-		Application a = new Application();
 		play();
 	}
 

@@ -31,6 +31,9 @@ public class Characters
 	private static final double MAX_ARMOR = 100;
 	private static final double MIN_DAMAGE = 1;
 	private static final double MAX_DAMAGE = 200;
+	
+	private static final double BURN_DAMAGE = 3;
+	private static final double POIS_DAMAGE = 3;
 
 	private String name;
 	private int range;
@@ -270,11 +273,12 @@ public class Characters
 	
 	public void removeStatus(Status pStatus)
 	{
+		status.remove(pStatus);
 		if(noStatus())
 		{
 			setStatus(Status.NO_STATUS);
 		}
-		status.remove(pStatus);
+		
 	}
 
 	public boolean noStatus()
@@ -386,7 +390,7 @@ public class Characters
 
 	public void heals()
 	{
-		if (TurnManagement.getLastHeal(facingRight))
+		if (TurnManagement.canBeHealing(facingRight))
 		{
 			changeHealth(healing);
 		}
@@ -395,11 +399,21 @@ public class Characters
 
 	public void block()
 	{
-		if (TurnManagement.getLastBlock(facingRight))
+		if (TurnManagement.canBeBlocking(facingRight))
 		{
 			//TODO this is so fucking sloppy
 			setStatus(Status.BLOCKING);
 		}
+	}
+	
+	public void poisDamage()
+	{
+		changeHealth(-POIS_DAMAGE);
+	}
+	
+	public void burnDamage()
+	{
+		changeHealth(-BURN_DAMAGE);
 	}
 
 	public int getDistance(Characters currentCharacter)
@@ -417,6 +431,18 @@ public class Characters
 		return health <= 0;
 	}
 
+	public String statusToString()
+	{
+		String currentStatus = "";
+		for(int i = 0; i < Status.values().length; i++)
+		{
+			if(getStatus(Status.values()[i]))
+			{
+				currentStatus += StatusInfo.statusString(Status.values()[i])+", ";
+			}
+		}
+		return currentStatus;
+	}
 	public String toString()
 	{
 		// TODO will have to review this later
