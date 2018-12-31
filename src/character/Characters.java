@@ -346,6 +346,7 @@ public abstract class Characters
 
 		if (validateMouvement(pMouvement) && Field.validatePosition(position + pMouvement * direction))
 		{
+			Application.obstacleDetection(this, (position + pMouvement*direction));
 			setPosition(position + (pMouvement * direction));
 		}
 
@@ -357,8 +358,9 @@ public abstract class Characters
 
 		pMouvement = slowed(pMouvement);
 
-		if (validateMouvement(pMouvement) && Field.validatePosition(position - (pMouvement * direction)))
+		if (validateMouvement(pMouvement) && Field.validatePosition(position + (pMouvement * direction)))
 		{
+			Application.obstacleDetection(this, (position + pMouvement*direction));
 			setPosition(position - (pMouvement * direction));
 		}
 

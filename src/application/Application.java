@@ -2,6 +2,7 @@ package application;
 
 import java.util.ArrayList;
 
+import character.AI;
 import character.Characters;
 import character.Status;
 import character.StatusInfo;
@@ -14,6 +15,10 @@ import characterSpecialisation.Swordsman;
 import environement.Field;
 import environement.Obstacle;
 import environement.TurnManagement;
+import obstacleTrait.Mud;
+import obstacleTrait.Spike;
+import obstacleTrait.ToxicSwamp;
+import obstacleTrait.WallOfFire;
 import playerInteraction.Input;
 import playerInteraction.Output;
 
@@ -106,7 +111,8 @@ public class Application
 				obstacleList.add(obstacleSpacing(1, newObstacle));
 				obstacleList.add(obstacleSpacing(2, newObstacle));
 				obstacleList.add(obstacleSpacing(3, newObstacle));
-
+				obstacleList.add(obstacleSpacing(4, newObstacle));
+				
 				newObstacle.add(obstacleList.get((int) (Math.random() * (obstacleList.size()))));
 			} while (moreObstacle(newObstacle));
 		}
@@ -114,9 +120,30 @@ public class Application
 
 	}
 
-	public static Obstacle obstacleSpacing(double pDamage, ArrayList<Obstacle> obstacleList)
+	public static Obstacle findObstacle(int pNumber)
 	{
-		Obstacle newObst = new Obstacle(pDamage);
+		Obstacle newObst = null;
+		switch(pNumber)
+		{
+		case 1:
+			newObst = new Spike();
+			break;
+		case 2:
+			newObst = new Mud();
+			break;
+		case 3:
+			newObst = new WallOfFire();
+			break;
+		case 4:
+			newObst = new ToxicSwamp();
+			break;
+		}
+		return newObst;
+	}
+	
+	public static Obstacle obstacleSpacing(int pNumber, ArrayList<Obstacle> obstacleList)
+	{
+		Obstacle newObst = findObstacle(pNumber);
 	
 			for (int i = 0; i < obstacleList.size(); i++)
 			{
@@ -195,12 +222,14 @@ public class Application
 		int move;
 		Characters otherCharacter = findOtherCharacter(currentCharacter);
 
+		updateStatus(currentCharacter);
+		standOnObstacle(currentCharacter);
 		if (!isPlayer)
 		{
-			move = aiTurn(currentCharacter, otherCharacter);
+			move = AI.aiTurn(currentCharacter, otherCharacter);
 		} else
 		{
-			updateStatus(currentCharacter);
+			
 
 			if (currentCharacter.getStatus(Status.STUNNED))
 			{
@@ -261,6 +290,21 @@ public class Application
 		return (Input.askInt("How many space do you want to travel?\n\n Your speed is: " + currentCharacter.getSpeed()
 				+ "\n\n the distance between you is: "
 				+ currentCharacter.getDistance(findOtherCharacter(currentCharacter)) + "\n\n" + currentField()));
+	}
+	
+	public static void obstacleDetection(Characters currentCharacter, int lastPosition)
+	{
+		for(int i = 0; i < obstacle.size();i++)
+		{
+			obstacle.get(i).passTrough(currentCharacter, lastPosition);
+		}
+	}
+	public static void standOnObstacle(Characters currentCharacter)
+	{
+		for(int i = 0; i < obstacle.size();i++)
+		{
+			obstacle.get(i).standOn(currentCharacter);
+		}
 	}
 
 	public static Characters findOtherCharacter(Characters currentCharacter)
@@ -347,13 +391,14 @@ public class Application
 		{
 			for (int i = 0; i <= Field.getLenght(); i++)
 			{
+
 				oldField = obstacleField;
 				for (int j = 0; j < obstacle.size(); j++)
 				{
 					if (i >= obstacle.get(j).getPosition()
 							&& i < obstacle.get(j).getPosition() + obstacle.get(j).getLenght())
 					{
-						obstacleField += "* ";
+						obstacleField += obstacle.get(j).getSprite();
 					}
 				}
 				if (oldField.equals(obstacleField))
@@ -383,39 +428,7 @@ public class Application
 		}
 	}
 
-	public static int aiTurn(Characters currentCharacter, Characters otherCharacter)
-	{
-		// TODO better AI
-		int move;
-		if (currentCharacter.attackHit(otherCharacter.getPosition()))
-		{
-			move = 3;
-		} else if (otherCharacter.attackHit(currentCharacter.getPosition())
-				&& !otherCharacter.attackHit(currentCharacter.getPosition() - currentCharacter.getSpeed()))
-		{
-			move = 2;
-
-		}
-
-		else if (!currentCharacter.attackHit(otherCharacter.getPosition())
-				&& !otherCharacter.attackHit(currentCharacter.getPosition() + currentCharacter.getSpeed()))
-		{
-			move = 1;
-		} else if (otherCharacter.attackHit(currentCharacter.getPosition())
-				&& !otherCharacter.attackHit(currentCharacter.getPosition() + currentCharacter.getSpeed()))
-		{
-			move = 1;
-		} else if (otherCharacter.attackHit(currentCharacter.getPosition())
-				&& otherCharacter.attackHit(currentCharacter.getPosition() + currentCharacter.getSpeed()))
-		{
-			move = 1;
-		} else
-		{
-			move = 3;
-		}
-
-		return move;
-	}
+	
 
 	public static void main(String[] args)
 	{

@@ -1,9 +1,9 @@
 package environement;
 
-public class Obstacle
+import character.Characters;
+
+public abstract class Obstacle
 {
-	private static final double MAX_DAMAGE = 10;
-	private static final double MIN_DAMAGE = 0;
 	private static final int MAX_LENGHT = 3;
 	private static final int MIN_LENGHT = 1;
 	private static final int MAX_POSITION = Field.getLenght() - 5;
@@ -11,13 +11,16 @@ public class Obstacle
 
 	private int position;
 	private int lenght;
-	private double damage;
+	private String sprite;
 
-	public Obstacle(double pDamage)
+	private int[] allPosition;
+
+	public Obstacle(String pSprite)
 	{
 		setPosition();
 		setLenght();
-		setDamage(pDamage);
+		setAllPosition();
+		setSprite(pSprite);
 	}
 
 	public int getPosition()
@@ -40,34 +43,76 @@ public class Obstacle
 		lenght = (int) (Math.random() * (MAX_LENGHT - MIN_LENGHT + 1) + MIN_LENGHT);
 	}
 
-	public double getDamage()
+	public int[] getAllPosition()
 	{
-		return damage;
+		return allPosition;
 	}
 
-	public void setDamage(double pDamage)
+	public void setAllPosition()
 	{
-		if (validateDamage(pDamage))
+		allPosition = new int[lenght];
+		for (int i = 0; i < lenght; i++)
 		{
-			damage = pDamage;
+			allPosition[i] = position + i;
 		}
 	}
 
-	private boolean validateDamage(double pDamage)
+	public String getSprite()
 	{
-		return pDamage >= MIN_DAMAGE && pDamage <= MAX_DAMAGE;
+		return sprite;
 	}
-	
+
+	public void setSprite(String pSprite)
+	{
+		sprite = pSprite;
+	}
+
 	public int getDistance(Obstacle otherObstacle)
 	{
-		
 		return Math.abs(position - otherObstacle.getPosition());
 	}
+
+	public void passTrough(Characters currentCharacter, int lastPosition)
+	{
+		if (currentCharacter.getFacing())
+		{
+			for (int i = 0; i < lenght; i++)
+			{
+				if (currentCharacter.getPosition() < allPosition[i] && lastPosition > allPosition[i])
+				{
+					obstEffect(currentCharacter);
+				}
+			}
+		}
+		else
+		{
+			for (int i = 0; i < lenght; i++)
+			{
+				if (currentCharacter.getPosition() > allPosition[i] && lastPosition < allPosition[i])
+				{
+					obstEffect(currentCharacter);
+				}
+			}
+		}
+	}
+
+	public void standOn(Characters currentCharacter)
+	{
+		for (int i = 0; i < lenght; i++)
+		{
+			if (currentCharacter.getPosition() == allPosition[i])
+			{
+				obstEffect(currentCharacter);
+			}
+		}
+	}
+
+	public abstract void obstEffect(Characters currentCharacter);
 
 	@Override
 	public String toString()
 	{
 		// TODO do a better toString
-		return position + " " + lenght + " " + damage;
+		return sprite;
 	}
 }
