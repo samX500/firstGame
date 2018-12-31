@@ -1,5 +1,7 @@
 package environement;
 
+import java.security.KeyStore.PrivateKeyEntry;
+
 import character.Characters;
 import character.Status;
 
@@ -24,6 +26,8 @@ public class TurnManagement
 	private static int statSlow = 0;
 	private static int statPois = 0;
 	private static int statBurn = 0;
+	
+	private static boolean isSlowed = false;
 
 	private static int currentTurn = 1;
 
@@ -97,7 +101,7 @@ public class TurnManagement
 	public static boolean canBeSpecialing(boolean pFacing)
 	{
 		boolean canSpecial = canSpecial(pFacing);
-		setLastBlock(pFacing);
+		setLastSpecial(pFacing);
 		return canSpecial;
 	}
 	
@@ -164,7 +168,6 @@ public class TurnManagement
 		case STUNNED:
 			break;
 		case SLOWED:
-			// TODO create something that does speed/2
 			break;
 		case POISONED:
 			currentCharacter.poisDamage();
@@ -174,7 +177,7 @@ public class TurnManagement
 			break;
 		}
 	}
-
+	
 	private static void blockingTime()
 	{
 		statBlock = currentTurn;

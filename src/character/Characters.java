@@ -19,11 +19,11 @@ public abstract class Characters
 	private static final double DEFAULT_DAMAGE = 5;
 	private static final boolean DEFAULT_FACING = true;
 
-	private static final int MIN_RANGE = 1;
+	private static final int MIN_RANGE = 0;
 	private static final int MAX_RANGE = 50;
-	private static final int MIN_SPEED = 1;
+	private static final int MIN_SPEED = 0;
 	private static final int MAX_SPEED = 50;
-	private static final double MIN_HEALTH = 1;
+	private static final double MIN_HEALTH = 0;
 	private static final double MAX_HEALTH = 200;
 	private static final double MIN_HEALING = 0;
 	private static final double MAX_HEALING = 100;
@@ -320,8 +320,9 @@ public abstract class Characters
 			reducedHit = 0;
 		} else
 		{
-			setArmor(0);
 			reducedHit -= armor;
+			setArmor(0);
+			
 		}
 		return reducedHit * 2;
 	}
@@ -340,35 +341,32 @@ public abstract class Characters
 
 	public void moveForward(boolean pFacing, int pMouvement)
 	{
-		if (validateMouvement(pMouvement))
+		int direction = direction(pFacing);
+		pMouvement = slowed(pMouvement);
+
+		if (validateMouvement(pMouvement) && Field.validatePosition(position + pMouvement * direction))
 		{
-			int direction = -1;
-			if (pFacing)
-			{
-				direction = 1;
-			}
-			if (Field.validatePosition(position + pMouvement * direction))
-			{
-				setPosition(position + (pMouvement * direction));
-			}
+			setPosition(position + (pMouvement * direction));
 		}
+
 	}
 
 	public void moveBackward(boolean pFacing, int pMouvement)
 	{
-		if (validateMouvement(pMouvement))
-		{
-			int direction = 1;
-			if (pFacing)
-			{
-				direction = -1;
-			}
+		int direction = direction(pFacing);
 
-			if (Field.validatePosition(position + (pMouvement * direction)))
-			{
-				setPosition(position + (pMouvement * direction));
-			}
+		pMouvement = slowed(pMouvement);
+
+		if (validateMouvement(pMouvement) && Field.validatePosition(position - (pMouvement * direction)))
+		{
+			setPosition(position - (pMouvement * direction));
 		}
+
+	}
+
+	public static int direction(boolean pFacing)
+	{
+		return pFacing ? 1 : -1;
 	}
 
 	public boolean validateMouvement(int pMouvement)
@@ -433,7 +431,17 @@ public abstract class Characters
 	}
 
 	public abstract void specialAttack(Characters otherCharacter);
-	
+
+	// TODO this can stack and it shouldn't
+	public int slowed(int pMouvement)
+	{
+		if (this.getStatus(Status.SLOWED))
+		{
+			pMouvement /= 2;
+		}
+		return pMouvement ==0? 1: pMouvement;
+	}
+
 	public void poisDamage()
 	{
 		changeHealth(-POIS_DAMAGE);
@@ -446,7 +454,7 @@ public abstract class Characters
 
 	public int getDistance(Characters otherCharacter)
 	{
-		return  Math.abs(position - otherCharacter.getPosition());
+		return Math.abs(position - otherCharacter.getPosition());
 	}
 
 	public boolean die()

@@ -2,6 +2,7 @@ package characterSpecialisation;
 
 import character.Characters;
 import character.Status;
+import environement.TurnManagement;
 
 public class Assasin extends Characters
 {
@@ -9,14 +10,28 @@ public class Assasin extends Characters
 	{
 		super("Assasin", 1, 8, 20, 0, 0, 0, pFacing, pPosition);
 	}
+
+	@Override
+	public void attack(Characters otherCharacter)
+	{
+		if (attackHit(otherCharacter.getPosition()))
+		{
+			otherCharacter.setStatus(Status.STUNNED);
+		}
+	}
+
 	@Override
 	public void specialAttack(Characters otherCharacter)
 	{
-		if(otherCharacter.getStatus(Status.STUNNED)&&attackHit(otherCharacter.getPosition()))
+
+		if (TurnManagement.canBeSpecialing(getFacing()))
 		{
-			otherCharacter.changeHealth(-otherCharacter.getMaxHealth());
+			if (otherCharacter.getStatus(Status.STUNNED) && attackHit(otherCharacter.getPosition()))
+			{
+				otherCharacter.changeHealth(-otherCharacter.getMaxHealth());
+			}
 		}
-		
+
 	}
-	
+
 }

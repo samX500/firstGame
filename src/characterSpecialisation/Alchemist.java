@@ -2,6 +2,7 @@ package characterSpecialisation;
 
 import character.Characters;
 import character.Status;
+import environement.TurnManagement;
 
 public class Alchemist extends Characters
 {
@@ -9,16 +10,30 @@ public class Alchemist extends Characters
 	{
 		super("Alchemist", 5, 3, 30, 15, 5, 5, pFacing, pPosition);
 	}
+
+	@Override
+	public void attack(Characters otherCharacter)
+	{
+		if (attackHit(otherCharacter.getPosition()))
+		{
+			otherCharacter.takeDamage(getDamage());
+			otherCharacter.setStatus(Status.POISONED);
+		}
+	}
+
 	@Override
 	public void specialAttack(Characters otherCharacter)
 	{
-		if(attackHit(otherCharacter.getPosition()))
+		if (TurnManagement.canBeSpecialing(getFacing()))
 		{
-			setStatus(Status.SLOWED);
-			setStatus(Status.BURNED);
-			setStatus(Status.POISONED);
+			if (attackHit(otherCharacter.getPosition()))
+			{
+				otherCharacter.takeDamage(getDamage());
+				otherCharacter.setStatus(Status.SLOWED);
+				otherCharacter.setStatus(Status.BURNED);
+				otherCharacter.setStatus(Status.POISONED);
+			}
 		}
-		
 	}
 
 }
