@@ -5,6 +5,12 @@ import java.util.ArrayList;
 import character.Characters;
 import character.Status;
 import character.StatusInfo;
+import characterSpecialisation.Alchemist;
+import characterSpecialisation.Archer;
+import characterSpecialisation.Assasin;
+import characterSpecialisation.LanceMan;
+import characterSpecialisation.Shieldman;
+import characterSpecialisation.Swordsman;
 import environement.Field;
 import environement.Obstacle;
 import environement.TurnManagement;
@@ -13,7 +19,7 @@ import playerInteraction.Output;
 
 public class Application
 {
-	public static final double OBSTACLE_RATIO = (0.2);
+	public static final double OBSTACLE_RATIO = 0.2;
 
 	static Characters player1 = null;
 	static Characters player2 = null;
@@ -162,12 +168,12 @@ public class Application
 			player = "Player 2";
 		}
 		// name,range,speed,maxhealth,healing,armor,damage,facing,position,health,status
-		characterList.add(new Characters("Swordsman", 2, 4, 25, 5, 10, 10, isFirst, startingPosition));
-		characterList.add(new Characters("Lanceman", 5, 2, 25, 5, 10, 10, isFirst, startingPosition));
-		characterList.add(new Characters("Archer", 10, 1, 25, 5, 5, 10, isFirst, startingPosition));
-		characterList.add(new Characters("Assasin", 1, 8, 20, 0, 0, 20, isFirst, startingPosition));
-		characterList.add(new Characters("Shieldman", 2, 1, 30, 5, 30, 10, isFirst, startingPosition));
-		characterList.add(new Characters("Doctor", 2, 3, 30, 15, 5, 5, isFirst, startingPosition));
+		characterList.add(new Swordsman(isFirst, startingPosition));
+		characterList.add(new LanceMan(isFirst, startingPosition));
+		characterList.add(new Archer(isFirst, startingPosition));
+		characterList.add(new Assasin(isFirst, startingPosition));
+		characterList.add(new Shieldman(isFirst, startingPosition));
+		characterList.add(new Alchemist(isFirst, startingPosition));
 		String choice = "";
 		if (isPlayer)
 		{
@@ -204,7 +210,7 @@ public class Application
 				do
 				{
 					move = (Input.askInt(createDisplay(currentCharacter)));
-				} while (move <= 1 && move >= 6);
+				} while (move <= 1 && move >= 8);
 			}
 
 		}
@@ -242,6 +248,10 @@ public class Application
 			break;
 		case 7:
 			currentCharacter.grab(otherCharacter);
+			break;
+		case 8:
+			currentCharacter.specialAttack(otherCharacter);
+			break;
 
 		}
 	}
@@ -270,6 +280,7 @@ public class Application
 	{
 		String canHeal;
 		String canBlock;
+		String canSpecial;
 
 		String player = "Player 2 ";
 		if (currentCharacter == player1)
@@ -290,12 +301,20 @@ public class Application
 		{
 			canBlock = "can't block";
 		}
+		if (TurnManagement.canSpecial(currentCharacter.getFacing()))
+		{
+			canSpecial = "can special";
+		} else
+		{
+			canSpecial = "can't special";
+		}
+		
 
 		String message1 = "Turn " + TurnManagement.getTurn() + " " + player + "choose your move\n";
-		String message2 = "1: Move forward   2: Move backward   3: Attack    4: Heal   5: Block   6: Grab\n\n";
+		String message2 = "1: Move forward   2: Move backward   3: Jump   4: Attack    5: Heal   6: Block   7: Grab   8: Special attack\n\n";
 		String message3 = "Player 1 Health: " + player1.getHealth() + " Armor: " + player1.getArmor()
 				+ "   Player 2 Health: " + player2.getHealth() + " Armor:     " + player2.getArmor();
-		String message4 = "\n\n" + player + canHeal + "\n" + player + canBlock;
+		String message4 = "\n\n" + player + canHeal + "\n" + player + canBlock+ "\n" + player + canSpecial;
 		String message5 = "\n\nPlayer 1: " + player1.statusToString() + "   Player 2: " + player2.statusToString();
 		String message6 = "\n\nPlayer 1: " + player1 + "\n\nPlayer 2: " + player2 + "\n\nThe distance between you is "
 				+ currentCharacter.getDistance(findOtherCharacter(currentCharacter));

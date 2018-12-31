@@ -7,7 +7,7 @@ import java.util.ArrayList;
 
 import application.Application;
 
-public class Characters
+public abstract class Characters
 {
 	private static final String DEFAULT_NAME = "Farmer";
 	private static final int DEFAULT_RANGE = 2;
@@ -29,7 +29,7 @@ public class Characters
 	private static final double MAX_HEALING = 100;
 	private static final double MIN_ARMOR = 0;
 	private static final double MAX_ARMOR = 100;
-	private static final double MIN_DAMAGE = 1;
+	private static final double MIN_DAMAGE = 0;
 	private static final double MAX_DAMAGE = 200;
 
 	private static final double BURN_DAMAGE = 3;
@@ -432,6 +432,8 @@ public class Characters
 		}
 	}
 
+	public abstract void specialAttack(Characters otherCharacter);
+	
 	public void poisDamage()
 	{
 		changeHealth(-POIS_DAMAGE);

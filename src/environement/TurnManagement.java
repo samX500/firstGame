@@ -6,16 +6,18 @@ import character.Status;
 public class TurnManagement
 {
 	private static final int BLOCK_DURATION = 3;
-	//TODO maybe this can be an issue
+	// TODO maybe this can be an issue
 	private static final int STUN_DURATION = 4;
 	private static final int SLOW_DURATION = 5;
-	private static final int POIS_DURATION = 5;
-	private static final int BURN_DURATION = 5;
+	private static final int POIS_DURATION = 7;
+	private static final int BURN_DURATION = 7;
 
-	private static int lastHealP1 = -3;
-	private static int lastHealP2 = -3;
-	private static int lastBlockP1 = -3;
-	private static int lastBlockP2 = -3;
+	private static int lastHealP1 = -10;
+	private static int lastHealP2 = -10;
+	private static int lastBlockP1 = -10;
+	private static int lastBlockP2 = -10;
+	private static int lastSpecialP1 = -10;
+	private static int lastSpecialP2 = -10;
 
 	private static int statBlock = 0;
 	private static int statStun = 0;
@@ -74,6 +76,31 @@ public class TurnManagement
 		setLastBlock(pFacing);
 		return canBlock;
 	}
+	public static void setLastSpecial(boolean pFacing)
+	{
+		if (pFacing)
+		{
+			lastSpecialP1 = currentTurn;
+
+		} else
+		{
+			lastSpecialP2 = currentTurn;
+		}
+
+	}
+
+	public static boolean canSpecial(boolean pFacing)
+	{
+		return pFacing ? currentTurn > (lastSpecialP1 + 6) : currentTurn > (lastSpecialP2 + 6);
+	}
+
+	public static boolean canBeSpecialing(boolean pFacing)
+	{
+		boolean canSpecial = canSpecial(pFacing);
+		setLastBlock(pFacing);
+		return canSpecial;
+	}
+	
 
 	public static void statusStart(Status pStatus)
 	{
@@ -137,7 +164,7 @@ public class TurnManagement
 		case STUNNED:
 			break;
 		case SLOWED:
-			//TODO create something that does speed/2
+			// TODO create something that does speed/2
 			break;
 		case POISONED:
 			currentCharacter.poisDamage();
