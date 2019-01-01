@@ -99,11 +99,15 @@ public class Application
 
 	public static ArrayList<Obstacle> createObstacle()
 	{
-		// TODO I need lambda to make this work
-		// the current obstacles will be removed once I have lambda
-		ArrayList<Obstacle> newObstacle = new ArrayList<>();		
+		int areObstacle;
+		ArrayList<Obstacle> newObstacle = new ArrayList<>();
 
-		if (Input.askInt("Do you want obstacle on the field? (0 for no,1 for yes)") == 1)
+		do
+		{
+			areObstacle = Input.askInt("Do you want obstacle on the field? \n\n0: No      1: Yes");
+		} while (areObstacle <= 0 && areObstacle >= 1);
+
+		if (areObstacle == 1)
 		{
 			do
 			{
@@ -112,7 +116,7 @@ public class Application
 				obstacleList.add(obstacleSpacing(2, newObstacle));
 				obstacleList.add(obstacleSpacing(3, newObstacle));
 				obstacleList.add(obstacleSpacing(4, newObstacle));
-				
+
 				newObstacle.add(obstacleList.get((int) (Math.random() * (obstacleList.size()))));
 			} while (moreObstacle(newObstacle));
 		}
@@ -123,7 +127,7 @@ public class Application
 	public static Obstacle findObstacle(int pNumber)
 	{
 		Obstacle newObst = null;
-		switch(pNumber)
+		switch (pNumber)
 		{
 		case 1:
 			newObst = new Spike();
@@ -140,20 +144,20 @@ public class Application
 		}
 		return newObst;
 	}
-	
+
 	public static Obstacle obstacleSpacing(int pNumber, ArrayList<Obstacle> obstacleList)
 	{
 		Obstacle newObst = findObstacle(pNumber);
-	
-			for (int i = 0; i < obstacleList.size(); i++)
+
+		for (int i = 0; i < obstacleList.size(); i++)
+		{
+			while (newObst.getDistance(obstacleList.get(i)) <= 5)
 			{
-				while (newObst.getDistance(obstacleList.get(i)) <= 5)
-				{
-					newObst.setPosition();
-					i = 0;
-				} 
+				newObst.setPosition();
+				i = 0;
 			}
-		
+		}
+
 		return newObst;
 	}
 
@@ -194,13 +198,14 @@ public class Application
 			startingPosition = Field.getLenght();
 			player = "Player 2";
 		}
-		// name,range,speed,maxhealth,healing,armor,damage,facing,position,health,status
+
 		characterList.add(new Swordsman(isFirst, startingPosition));
 		characterList.add(new LanceMan(isFirst, startingPosition));
 		characterList.add(new Archer(isFirst, startingPosition));
 		characterList.add(new Assasin(isFirst, startingPosition));
 		characterList.add(new Shieldman(isFirst, startingPosition));
 		characterList.add(new Alchemist(isFirst, startingPosition));
+
 		String choice = "";
 		if (isPlayer)
 		{
@@ -208,7 +213,11 @@ public class Application
 			{
 				choice += "\n\n" + (i + 1) + ": " + characterList.get(i);
 			}
-			choose = (Input.askInt(player + " choose your character" + choice));
+			do
+			{
+				choose = (Input.askInt(player + " choose your character" + choice));
+			} while (choose <= 1 && choose >= characterList.size() + 1);
+
 		} else
 		{
 			choose = (int) (Math.random() * (characterList.size()) + 1);
@@ -223,13 +232,12 @@ public class Application
 		Characters otherCharacter = findOtherCharacter(currentCharacter);
 
 		updateStatus(currentCharacter);
-		standOnObstacle(currentCharacter);
+
 		if (!isPlayer)
 		{
 			move = AI.aiTurn(currentCharacter, otherCharacter);
 		} else
 		{
-			
 
 			if (currentCharacter.getStatus(Status.STUNNED))
 			{
@@ -245,6 +253,7 @@ public class Application
 		}
 		takeAction(currentCharacter, move);
 		TurnManagement.newTurn();
+		standOnObstacle(currentCharacter);
 
 	}
 
@@ -257,14 +266,13 @@ public class Application
 		case 0:
 			break;
 		case 1:
-			currentCharacter.moveForward(currentCharacter.getFacing(), spaceMove(currentCharacter));
+			currentCharacter.moveForward(spaceMove(currentCharacter));
 			break;
 		case 2:
-			currentCharacter.moveBackward(currentCharacter.getFacing(), spaceMove(currentCharacter));
+			currentCharacter.moveBackward(spaceMove(currentCharacter));
 			break;
 		case 3:
-			// TODO jump, jump will always travel you the whole speed value and let's you
-			// avoid obstacles
+			currentCharacter.jump(jumpSide(currentCharacter));
 			break;
 		case 4:
 			currentCharacter.attack(otherCharacter);
@@ -287,21 +295,43 @@ public class Application
 
 	public static int spaceMove(Characters currentCharacter)
 	{
-		return (Input.askInt("How many space do you want to travel?\n\n Your speed is: " + currentCharacter.getSpeed()
-				+ "\n\n the distance between you is: "
-				+ currentCharacter.getDistance(findOtherCharacter(currentCharacter)) + "\n\n" + currentField()));
+		int mouvement = 0;
+
+		do
+		{
+			mouvement = (Input.askInt("How many space do you want to travel?\n\n Your speed is: "
+					+ currentCharacter.getSpeed() + "\n\n the distance between you is: "
+					+ currentCharacter.getDistance(findOtherCharacter(currentCharacter)) + "\n\n" + currentField()));
+		} while (mouvement <= 0 && mouvement >= currentCharacter.getSpeed());
+
+		return mouvement;
 	}
-	
+
+	public static int jumpSide(Characters currentCharacter)
+	{
+		int side = 0;
+		do
+		{
+			side = (Input.askInt(
+					"Do you want to jump forward or backward?\n\n 0: forward     1: backward\n\n Your speed is: "
+							+ currentCharacter.getSpeed() + "\n\n the distance between you is: "
+							+ currentCharacter.getDistance(findOtherCharacter(currentCharacter)) + "\n\n"
+							+ currentField()));
+		} while (side <= 0 && side >= 1);
+		return side;
+	}
+
 	public static void obstacleDetection(Characters currentCharacter, int lastPosition)
 	{
-		for(int i = 0; i < obstacle.size();i++)
+		for (int i = 0; i < obstacle.size(); i++)
 		{
 			obstacle.get(i).passTrough(currentCharacter, lastPosition);
 		}
 	}
+
 	public static void standOnObstacle(Characters currentCharacter)
 	{
-		for(int i = 0; i < obstacle.size();i++)
+		for (int i = 0; i < obstacle.size(); i++)
 		{
 			obstacle.get(i).standOn(currentCharacter);
 		}
@@ -352,13 +382,12 @@ public class Application
 		{
 			canSpecial = "can't special";
 		}
-		
 
 		String message1 = "Turn " + TurnManagement.getTurn() + " " + player + "choose your move\n";
 		String message2 = "1: Move forward   2: Move backward   3: Jump   4: Attack    5: Heal   6: Block   7: Grab   8: Special attack\n\n";
 		String message3 = "Player 1 Health: " + player1.getHealth() + " Armor: " + player1.getArmor()
 				+ "   Player 2 Health: " + player2.getHealth() + " Armor:     " + player2.getArmor();
-		String message4 = "\n\n" + player + canHeal + "\n" + player + canBlock+ "\n" + player + canSpecial;
+		String message4 = "\n\n" + player + canHeal + "\n" + player + canBlock + "\n" + player + canSpecial;
 		String message5 = "\n\nPlayer 1: " + player1.statusToString() + "   Player 2: " + player2.statusToString();
 		String message6 = "\n\nPlayer 1: " + player1 + "\n\nPlayer 2: " + player2 + "\n\nThe distance between you is "
 				+ currentCharacter.getDistance(findOtherCharacter(currentCharacter));
@@ -371,6 +400,8 @@ public class Application
 		String oldField = "";
 		String currentField = "";
 		String obstacleField = "";
+		if(!isObstacle)
+		{
 		for (int i = 0; i <= Field.getLenght(); i++)
 		{
 			if (i == player1.getPosition() && i == player2.getPosition())
@@ -387,18 +418,34 @@ public class Application
 				currentField += "_ ";
 			}
 		}
-		if (isObstacle)
+		}
+		else
 		{
 			for (int i = 0; i <= Field.getLenght(); i++)
 			{
 
 				oldField = obstacleField;
-				for (int j = 0; j < obstacle.size(); j++)
+				if (i == player1.getPosition() && i == player2.getPosition())
 				{
-					if (i >= obstacle.get(j).getPosition()
-							&& i < obstacle.get(j).getPosition() + obstacle.get(j).getLenght())
+					obstacleField += "12";
+				} else if (i == player1.getPosition())
+				{
+					obstacleField += "1_ ";
+				} else if (i == player2.getPosition())
+				{
+					obstacleField += " 2 ";
+				}
+
+				else
+				{
+					for (int j = 0; j < obstacle.size(); j++)
 					{
-						obstacleField += obstacle.get(j).getSprite();
+
+						if (i >= obstacle.get(j).getPosition()
+								&& i < obstacle.get(j).getPosition() + obstacle.get(j).getLenght())
+						{
+							obstacleField += obstacle.get(j).getSprite();
+						}
 					}
 				}
 				if (oldField.equals(obstacleField))
@@ -427,8 +474,6 @@ public class Application
 			}
 		}
 	}
-
-	
 
 	public static void main(String[] args)
 	{

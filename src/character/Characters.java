@@ -339,9 +339,9 @@ public abstract class Characters
 		changeHealth(-remainingDamage);
 	}
 
-	public void moveForward(boolean pFacing, int pMouvement)
+	public void moveForward(int pMouvement)
 	{
-		int direction = direction(pFacing);
+		int direction = direction(facingRight);
 		pMouvement = slowed(pMouvement);
 
 		if (validateMouvement(pMouvement) && Field.validatePosition(position + pMouvement * direction))
@@ -352,9 +352,9 @@ public abstract class Characters
 
 	}
 
-	public void moveBackward(boolean pFacing, int pMouvement)
+	public void moveBackward(int pMouvement)
 	{
-		int direction = direction(pFacing);
+		int direction = direction(facingRight);
 
 		pMouvement = slowed(pMouvement);
 
@@ -364,6 +364,16 @@ public abstract class Characters
 			setPosition(position - (pMouvement * direction));
 		}
 
+	}
+	
+	public void jump(int pJumpSide)
+	{
+		int jumpSide = pJumpSide == 0? 1:-1;
+		int direction = direction(facingRight);
+		if(Field.validatePosition(position + (speed * direction)))
+		{
+			setPosition(position + (speed*direction*jumpSide));
+		}
 	}
 
 	public static int direction(boolean pFacing)

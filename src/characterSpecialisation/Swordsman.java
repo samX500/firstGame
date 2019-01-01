@@ -19,7 +19,7 @@ public class Swordsman extends Characters
 		{
 			if(otherCharacter.getPosition() > getPosition())
 			{
-				moveForward(getFacing(), getSpeed());
+				moveForward(getSpeed());
 				setDamage(getDamage()*2);
 				attack(otherCharacter);
 				setDamage(getDamage()/2);
@@ -27,7 +27,7 @@ public class Swordsman extends Characters
 			}
 			else
 			{
-				moveBackward(getFacing(), getSpeed());
+				moveBackward(getSpeed());
 				setDamage(getDamage()*2);
 				attack(otherCharacter);
 				setDamage(getDamage()/2);
