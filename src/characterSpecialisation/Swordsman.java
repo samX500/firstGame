@@ -5,11 +5,17 @@ import character.Status;
 import environement.TurnManagement;
 
 public class Swordsman extends Characters
-{
+{private static final String NAME = "Swordsman";
+private static final int RANGE = 5;
+private static final int SPEED = 8;
+private static final double MAX_HEALTH = 30;
+private static final double HEALING = 5;
+private static final double ARMOR = 10;
+private static final double DAMAGE = 10;
 	public Swordsman(boolean pFacing, int pPosition)
 	{
 
-		super("Swordsman", 2, 4, 25, 5, 10, 10, pFacing, pPosition);
+		super(NAME, RANGE,SPEED, MAX_HEALTH, HEALING,ARMOR, DAMAGE, pFacing, pPosition);
 	}
 
 	@Override

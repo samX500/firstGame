@@ -6,10 +6,17 @@ import environement.TurnManagement;
 
 public class Archer extends Characters
 {
+	private static final String NAME = "Archer";
+	private static final int RANGE = 15;
+	private static final int SPEED = 4;
+	private static final double MAX_HEALTH = 30;
+	private static final double HEALING = 5;
+	private static final double ARMOR = 5;
+	private static final double DAMAGE = 5;
 
-	public Archer(boolean pFacing, int pPositon)
+	public Archer(boolean pFacing, int pPosition)
 	{
-		super("Archer", 10, 1, 25, 5, 5, 10, pFacing, pPositon);
+		super(NAME, RANGE, SPEED, MAX_HEALTH, HEALING, ARMOR, DAMAGE, pFacing, pPosition);
 	}
 
 	@Override
@@ -20,9 +27,9 @@ public class Archer extends Characters
 			doAttack(otherCharacter);
 		} else
 		{
-			setDamage(getDamage()*0.3);
+			setDamage(getDamage() * 0.3);
 			doAttack(otherCharacter);
-			setDamage(getDamage()/0.3);
+			setDamage(getDamage() / 0.3);
 		}
 	}
 
@@ -46,8 +53,7 @@ public class Archer extends Characters
 		{
 			if (getDistance(otherCharacter) <= 3)
 			{
-				int knocback = (getPosition() < otherCharacter.getPosition())
-						? (otherCharacter.getPosition() + 5)
+				int knocback = (getPosition() < otherCharacter.getPosition()) ? (otherCharacter.getPosition() + 5)
 						: (otherCharacter.getPosition() - 5);
 				attack(otherCharacter);
 				otherCharacter.setPosition(knocback);
