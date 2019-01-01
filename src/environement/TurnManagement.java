@@ -1,18 +1,15 @@
 package environement;
 
-import java.security.KeyStore.PrivateKeyEntry;
-
 import character.Characters;
 import character.Status;
 
 public class TurnManagement
 {
 	private static final int BLOCK_DURATION = 3;
-	// TODO maybe this can be an issue
-	private static final int STUN_DURATION = 4;
-	private static final int SLOW_DURATION = 5;
-	private static final int POIS_DURATION = 7;
-	private static final int BURN_DURATION = 7;
+	private static final int STUN_DURATION = 3;
+	private static final int SLOW_DURATION = 3;
+	private static final int POIS_DURATION = 5;
+	private static final int BURN_DURATION = 5;
 
 	private static int lastHealP1 = -10;
 	private static int lastHealP2 = -10;
@@ -21,13 +18,16 @@ public class TurnManagement
 	private static int lastSpecialP1 = -10;
 	private static int lastSpecialP2 = -10;
 
-	private static int statBlock = 0;
-	private static int statStun = 0;
-	private static int statSlow = 0;
-	private static int statPois = 0;
-	private static int statBurn = 0;
-	
-	private static boolean isSlowed = false;
+	private static int statBlockP1 = 0;
+	private static int statBlockP2 = 0;
+	private static int statStunP1 = 0;
+	private static int statStunP2 = 0;
+	private static int statSlowP1 = 0;
+	private static int statSlowP2 = 0;
+	private static int statPoisP1 = 0;
+	private static int statPoisP2 = 0;
+	private static int statBurnP1 = 0;
+	private static int statBurnP2 = 0;
 
 	private static int currentTurn = 1;
 
@@ -80,6 +80,7 @@ public class TurnManagement
 		setLastBlock(pFacing);
 		return canBlock;
 	}
+
 	public static void setLastSpecial(boolean pFacing)
 	{
 		if (pFacing)
@@ -104,34 +105,38 @@ public class TurnManagement
 		setLastSpecial(pFacing);
 		return canSpecial;
 	}
-	
 
-	public static void statusStart(Status pStatus)
+	public static void statusStart(Characters currentCharacter, Status pStatus)
 	{
+		boolean isPlayer1 = false;
+		if (currentCharacter.getFacing())
+		{
+			isPlayer1 = true;
+		}
+
 		switch (pStatus)
 		{
 		case NO_STATUS:
 			break;
 		case BLOCKING:
-			blockingTime();
 			break;
 		case STUNNED:
-			stunTime();
+			stunTime(isPlayer1);
 			break;
 		case SLOWED:
-			slowTime();
+			slowTime(isPlayer1);
 			break;
 		case POISONED:
-			poisTime();
+			poisTime(isPlayer1);
 			break;
 		case BURNED:
-			burnTime();
+			burnTime(isPlayer1);
 			break;
 
 		}
 	}
 
-	public static boolean statusEnd(Status pStatus)
+	public static boolean statusEnd(Characters currentCharacter, Status pStatus)
 	{
 		boolean satusEnd = false;
 		switch (pStatus)
@@ -139,22 +144,55 @@ public class TurnManagement
 		case NO_STATUS:
 			break;
 		case BLOCKING:
-			satusEnd = blockOver();
+			satusEnd = blockOver(playerTimer(currentCharacter, pStatus));
 			break;
 		case STUNNED:
-			satusEnd = stunOver();
+			satusEnd = stunOver(playerTimer(currentCharacter, pStatus));
 			break;
 		case SLOWED:
-			satusEnd = slowOver();
+			satusEnd = slowOver(playerTimer(currentCharacter, pStatus));
 			break;
 		case POISONED:
-			satusEnd = poisOver();
+			satusEnd = poisOver(playerTimer(currentCharacter, pStatus));
 			break;
 		case BURNED:
-			satusEnd = burnOver();
+			satusEnd = burnOver(playerTimer(currentCharacter, pStatus));
 			break;
 		}
 		return satusEnd;
+	}
+
+	public static int playerTimer(Characters currentCharacter, Status pStatus)
+	{
+		boolean isPlayer1 = false;
+		int timer = 0;
+
+		if (currentCharacter.getFacing())
+		{
+			isPlayer1 = true;
+		}
+
+		switch (pStatus)
+		{
+		case NO_STATUS:
+			break;
+		case BLOCKING:
+			timer = isPlayer1 ? statBlockP1 : statBlockP2;
+			break;
+		case STUNNED:
+			timer = isPlayer1 ? statStunP1 : statStunP2;
+			break;
+		case SLOWED:
+			timer = isPlayer1 ? statSlowP1 : statSlowP2;
+			break;
+		case POISONED:
+			timer = isPlayer1 ? statPoisP1 : statPoisP2;
+			break;
+		case BURNED:
+			timer = isPlayer1 ? statBurnP1 : statBurnP2;
+			break;
+		}
+		return timer;
 	}
 
 	public static void statusActivate(Status pStatus, Characters currentCharacter)
@@ -177,55 +215,86 @@ public class TurnManagement
 			break;
 		}
 	}
-	
-	private static void blockingTime()
+
+	private static void blockingTime(boolean isPlayer1)
 	{
-		statBlock = currentTurn;
+		if (isPlayer1)
+		{
+			statBlockP1 = currentTurn;
+		} else
+		{
+			statBlockP2 = currentTurn;
+		}
+
 	}
 
-	private static boolean blockOver()
+	private static boolean blockOver(int timer)
 	{
-		return currentTurn - statBlock >= BLOCK_DURATION;
+		return currentTurn - timer >= BLOCK_DURATION;
 	}
 
-	private static void stunTime()
+	private static void stunTime(boolean isPlayer1)
 	{
-		statStun = currentTurn;
+		if (isPlayer1)
+		{
+			statStunP1 = currentTurn;
+		} else
+		{
+			statStunP2 = currentTurn;
+		}
 	}
 
-	private static boolean stunOver()
+	private static boolean stunOver(int timer)
 	{
-		return currentTurn - statStun >= STUN_DURATION;
+		return currentTurn - timer >= STUN_DURATION;
 	}
 
-	private static void slowTime()
+	private static void slowTime(boolean isPlayer1)
 	{
-		statSlow = currentTurn;
+		if (isPlayer1)
+		{
+			statSlowP1 = currentTurn;
+		} else
+		{
+			statSlowP2 = currentTurn;
+		}
 	}
 
-	private static boolean slowOver()
+	private static boolean slowOver(int timer)
 	{
-		return currentTurn - statSlow >= SLOW_DURATION;
+		return currentTurn - timer >= SLOW_DURATION;
 	}
 
-	private static void poisTime()
+	private static void poisTime(boolean isPlayer1)
 	{
-		statPois = currentTurn;
+		if (isPlayer1)
+		{
+			statPoisP1 = currentTurn;
+		} else
+		{
+			statPoisP2 = currentTurn;
+		}
 	}
 
-	private static boolean poisOver()
+	private static boolean poisOver(int timer)
 	{
-		return currentTurn - statPois >= POIS_DURATION;
+		return currentTurn - timer >= POIS_DURATION;
 	}
 
-	private static void burnTime()
+	private static void burnTime(boolean isPlayer1)
 	{
-		statBurn = currentTurn;
+		if (isPlayer1)
+		{
+			statBurnP1 = currentTurn;
+		} else
+		{
+			statBurnP2 = currentTurn;
+		}
 	}
 
-	private static boolean burnOver()
+	private static boolean burnOver(int timer)
 	{
-		return currentTurn - statBurn >= BURN_DURATION;
+		return currentTurn - timer >= BURN_DURATION;
 	}
 
 	public static void newTurn()

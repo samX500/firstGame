@@ -56,9 +56,10 @@ public class Application
 
 		boolean rotate = true;
 		int value;
-		while (!player1.die() && !player2.die())
+		do
 		{
 			value = rotate ? 0 : 1;
+
 			if (isPlayer)
 			{
 				takeTurn(playerList.get(value), true);
@@ -66,9 +67,14 @@ public class Application
 			{
 				takeTurn(playerList.get(value), false);
 			}
-
+			standOnObstacle(playerList.get(0));
+			standOnObstacle(playerList.get(1));
+			TurnManagement.newTurn();
+			updateStatus(playerList.get(0));
+			updateStatus(playerList.get(1));
 			rotate = !rotate;
-		}
+
+		} while (!player1.die() && !player2.die());
 
 		String player;
 		Characters winningPlayer = null;
@@ -100,6 +106,7 @@ public class Application
 	public static ArrayList<Obstacle> createObstacle()
 	{
 		int areObstacle;
+		boolean infiniteLoop = false;
 		ArrayList<Obstacle> newObstacle = new ArrayList<>();
 
 		do
@@ -112,13 +119,21 @@ public class Application
 			do
 			{
 				ArrayList<Obstacle> obstacleList = new ArrayList<>();
-				obstacleList.add(obstacleSpacing(1, newObstacle));
-				obstacleList.add(obstacleSpacing(2, newObstacle));
+//				obstacleList.add(obstacleSpacing(1, newObstacle));
+//				obstacleList.add(obstacleSpacing(2, newObstacle));
 				obstacleList.add(obstacleSpacing(3, newObstacle));
 				obstacleList.add(obstacleSpacing(4, newObstacle));
+				for (int i = 0; i < obstacleList.size(); i++)
+				{
+					if (obstacleList.get(i) == null)
+					{
+						infiniteLoop = true;
+					}
+				}
 
 				newObstacle.add(obstacleList.get((int) (Math.random() * (obstacleList.size()))));
-			} while (moreObstacle(newObstacle));
+				newObstacle.remove(null);
+			} while (!infiniteLoop && moreObstacle(newObstacle));
 		}
 		return newObstacle;
 
@@ -148,13 +163,22 @@ public class Application
 	public static Obstacle obstacleSpacing(int pNumber, ArrayList<Obstacle> obstacleList)
 	{
 		Obstacle newObst = findObstacle(pNumber);
+		int j = 0;
+		boolean infiniteLoop = false;
 
 		for (int i = 0; i < obstacleList.size(); i++)
 		{
-			while (newObst.getDistance(obstacleList.get(i)) <= 5)
+			while (!infiniteLoop && newObst.getDistance(obstacleList.get(i)) <= 5)
 			{
 				newObst.setPosition();
 				i = 0;
+				if (j >= 100000)
+				{
+					infiniteLoop = true;
+					newObst = null;
+				}
+				j++;
+
 			}
 		}
 
@@ -231,8 +255,6 @@ public class Application
 		int move;
 		Characters otherCharacter = findOtherCharacter(currentCharacter);
 
-		updateStatus(currentCharacter);
-
 		if (!isPlayer)
 		{
 			move = AI.aiTurn(currentCharacter, otherCharacter);
@@ -252,8 +274,6 @@ public class Application
 
 		}
 		takeAction(currentCharacter, move);
-		TurnManagement.newTurn();
-		standOnObstacle(currentCharacter);
 
 	}
 
@@ -400,26 +420,25 @@ public class Application
 		String oldField = "";
 		String currentField = "";
 		String obstacleField = "";
-		if(!isObstacle)
+		if (!isObstacle)
 		{
-		for (int i = 0; i <= Field.getLenght(); i++)
-		{
-			if (i == player1.getPosition() && i == player2.getPosition())
+			for (int i = 0; i <= Field.getLenght(); i++)
 			{
-				currentField += "12";
-			} else if (i == player1.getPosition())
-			{
-				currentField += "1_ ";
-			} else if (i == player2.getPosition())
-			{
-				currentField += " 2 ";
-			} else
-			{
-				currentField += "_ ";
+				if (i == player1.getPosition() && i == player2.getPosition())
+				{
+					currentField += "12";
+				} else if (i == player1.getPosition())
+				{
+					currentField += "1_ ";
+				} else if (i == player2.getPosition())
+				{
+					currentField += " 2 ";
+				} else
+				{
+					currentField += "_ ";
+				}
 			}
-		}
-		}
-		else
+		} else
 		{
 			for (int i = 0; i <= Field.getLenght(); i++)
 			{
@@ -464,7 +483,7 @@ public class Application
 		{
 			if (currentCharacter.getStatus(character.Status.values()[i]))
 			{
-				if (TurnManagement.statusEnd(character.Status.values()[i]))
+				if (TurnManagement.statusEnd(currentCharacter,character.Status.values()[i]))
 				{
 					currentCharacter.removeStatus(character.Status.values()[i]);
 				} else

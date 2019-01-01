@@ -262,14 +262,19 @@ public abstract class Characters
 
 	public void setStatus(Status pStatus)
 	{
-		// TODO I will have to test the shit out of this
-		// TODO Status do nothing
-		status.add(pStatus);
+		if (getStatus(pStatus))
+		{
+			status.remove(pStatus);
+			status.add(pStatus);
+		} else
+		{
+			status.add(pStatus);
+		}
 		if (!noStatus())
 		{
 			removeStatus(Status.NO_STATUS);
 		}
-		TurnManagement.statusStart(pStatus);
+		TurnManagement.statusStart(this,pStatus);
 	}
 
 	public void removeStatus(Status pStatus)
@@ -322,7 +327,7 @@ public abstract class Characters
 		{
 			reducedHit -= armor;
 			setArmor(0);
-			
+
 		}
 		return reducedHit * 2;
 	}
@@ -346,7 +351,7 @@ public abstract class Characters
 
 		if (validateMouvement(pMouvement) && Field.validatePosition(position + pMouvement * direction))
 		{
-			Application.obstacleDetection(this, (position + pMouvement*direction));
+			Application.obstacleDetection(this, (position + pMouvement * direction));
 			setPosition(position + (pMouvement * direction));
 		}
 
@@ -358,21 +363,21 @@ public abstract class Characters
 
 		pMouvement = slowed(pMouvement);
 
-		if (validateMouvement(pMouvement) && Field.validatePosition(position + (pMouvement * direction)))
+		if (validateMouvement(pMouvement) && Field.validatePosition(position - (pMouvement * direction)))
 		{
-			Application.obstacleDetection(this, (position + pMouvement*direction));
+			Application.obstacleDetection(this, (position - pMouvement * direction));
 			setPosition(position - (pMouvement * direction));
 		}
 
 	}
-	
+
 	public void jump(int pJumpSide)
 	{
-		int jumpSide = pJumpSide == 0? 1:-1;
+		int jumpSide = pJumpSide == 0 ? 1 : -1;
 		int direction = direction(facingRight);
-		if(Field.validatePosition(position + (speed * direction)))
+		if (Field.validatePosition(position + (speed * direction)))
 		{
-			setPosition(position + (speed*direction*jumpSide));
+			setPosition(position + (speed * direction * jumpSide));
 		}
 	}
 
@@ -451,7 +456,7 @@ public abstract class Characters
 		{
 			pMouvement /= 2;
 		}
-		return pMouvement ==0? 1: pMouvement;
+		return pMouvement == 0 ? 1 : pMouvement;
 	}
 
 	public void poisDamage()

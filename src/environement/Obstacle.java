@@ -78,17 +78,24 @@ public abstract class Obstacle
 		{
 			for (int i = 0; i < lenght; i++)
 			{
-				if (currentCharacter.getPosition() < allPosition[i] && lastPosition > allPosition[i])
+				if (lastPosition > currentCharacter.getPosition()
+						&& (currentCharacter.getPosition() < allPosition[i] && lastPosition > allPosition[i]))
+				{
+					obstEffect(currentCharacter);
+				} else if ((lastPosition < allPosition[i] && currentCharacter.getPosition() > allPosition[i]))
 				{
 					obstEffect(currentCharacter);
 				}
 			}
-		}
-		else
+		} else
 		{
 			for (int i = 0; i < lenght; i++)
 			{
-				if (currentCharacter.getPosition() > allPosition[i] && lastPosition < allPosition[i])
+				if (lastPosition < currentCharacter.getPosition()
+						&& (currentCharacter.getPosition() > allPosition[i] && lastPosition < allPosition[i]))
+				{
+					obstEffect(currentCharacter);
+				} else if ((lastPosition > allPosition[i] && currentCharacter.getPosition() < allPosition[i]))
 				{
 					obstEffect(currentCharacter);
 				}
