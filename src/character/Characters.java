@@ -47,6 +47,7 @@ public abstract class Characters
 	private int position;
 	private double health;
 	private ArrayList<StatusEnum> status = new ArrayList<>();
+	private static ArrayList<Status> statusObject = new ArrayList<>();
 
 	public Characters()
 	{
@@ -58,6 +59,7 @@ public abstract class Characters
 			double pDamage, boolean pFacing, int pPosition)
 	{
 
+		
 		if (validateDamage(pDamage) && validateMaxHealth(pMaxHealth) && validateName(pName)
 				&& Field.validatePosition(pPosition) && validateRange(pRange) && validateSpeed(pSpeed)
 				&& validateArmor(pArmor) && validateHealing(pHealing))
@@ -71,9 +73,11 @@ public abstract class Characters
 			setDamage(pDamage);
 			setFacing(pFacing);
 
+			setStatusObject();
 			setStatus(StatusEnum.NO_STATUS);
 			setHealth(pMaxHealth);
 			setPosition(pPosition);
+			
 
 		} else
 		{
@@ -86,9 +90,11 @@ public abstract class Characters
 			setDamage(DEFAULT_DAMAGE);
 			setFacing(DEFAULT_FACING);
 
+			setStatusObject();
 			setStatus(StatusEnum.NO_STATUS);
 			setHealth(DEFAULT_MAX_HEALTH);
 			setPosition(DEFAULT_POSITION);
+		
 		}
 	}
 
@@ -274,7 +280,8 @@ public abstract class Characters
 		{
 			removeStatus(StatusEnum.NO_STATUS);
 		}
-		TurnManagement.statusStart(this,pStatus);
+		statusObject.get(findObject(pStatus)).statusStart(facingRight);
+		//TurnManagement.statusStart(this,pStatus);
 	}
 
 	public void removeStatus(StatusEnum pStatus)
@@ -298,6 +305,49 @@ public abstract class Characters
 			}
 		}
 		return noStatus;
+	}
+	
+	public static ArrayList<Status> getStatusObject()
+	{
+		return statusObject;
+	}
+	public void setStatusObject()
+	{
+		for(int i = 0; i < StatusEnum.values().length; i++)
+		{
+			
+			statusObject.add(new Status(StatusEnum.values()[i]));
+		}
+	}
+	
+	public static int findObject(StatusEnum pStatus)
+	{
+		int object;
+		switch (pStatus)
+		{
+		case NO_STATUS:
+			object = 0;
+			break;
+		case BLOCKING:
+			object = 1;
+			break;
+		case STUNNED:
+			object = 2;
+			break;
+		case SLOWED:
+			object = 3;
+			break;
+		case POISONED:
+			object = 4;
+			break;
+		case BURNED:
+			object = 5;
+			break;
+			default:
+			object = 0;
+			break;
+		}
+		return object;
 	}
 
 	// Positive value = gain health

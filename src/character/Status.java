@@ -15,6 +15,7 @@ public class Status
 	public Status(StatusEnum pType)
 	{
 		setType(pType);
+		setDuration(type);
 	}
 
 	public int getTurnGotten(boolean facing)
@@ -39,9 +40,31 @@ public class Status
 		return duration;
 	}
 
-	public void setDuration(int pDuration)
+	public void setDuration(StatusEnum pStatus)
 	{
-		duration = pDuration;
+
+		switch (pStatus)
+		{
+		case NO_STATUS:
+			duration = 0;
+			break;
+		case BLOCKING:
+			duration = 3;
+			break;
+		case STUNNED:
+			duration = 3;
+			break;
+		case SLOWED:
+			duration = 3;
+			break;
+		case POISONED:
+			duration = 5;
+			break;
+		case BURNED:
+			duration = 5;
+			break;
+		}
+
 	}
 
 	public StatusEnum getType()

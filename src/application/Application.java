@@ -101,8 +101,9 @@ public class Application
 			do
 			{
 				ArrayList<Obstacle> obstacleList = new ArrayList<>();
-				obstacleList.add(obstacleSpacing(1, newObstacle));
-				obstacleList.add(obstacleSpacing(2, newObstacle));
+				//TODO add those back after debugging
+//				obstacleList.add(obstacleSpacing(1, newObstacle));
+//				obstacleList.add(obstacleSpacing(2, newObstacle));
 				obstacleList.add(obstacleSpacing(3, newObstacle));
 				obstacleList.add(obstacleSpacing(4, newObstacle));
 				for (int i = 0; i < obstacleList.size(); i++)
@@ -465,13 +466,22 @@ public class Application
 		{
 			if (currentCharacter.getStatus(character.StatusEnum.values()[i]))
 			{
-				if (TurnManagement.statusEnd(currentCharacter,character.StatusEnum.values()[i]))
+				if (Characters.getStatusObject().get(Characters.findObject(character.StatusEnum.values()[i]))
+						.statusEnd(currentCharacter.getFacing()))
 				{
 					currentCharacter.removeStatus(character.StatusEnum.values()[i]);
 				} else
 				{
-					TurnManagement.statusActivate(character.StatusEnum.values()[i], currentCharacter);
+					Characters.getStatusObject().get(Characters.findObject(character.StatusEnum.values()[i]))
+							.statusActivate(currentCharacter);
 				}
+//				if (TurnManagement.statusEnd(currentCharacter,character.StatusEnum.values()[i]))
+//				{
+//					currentCharacter.removeStatus(character.StatusEnum.values()[i]);
+//				} else
+//				{
+//					TurnManagement.statusActivate(character.StatusEnum.values()[i], currentCharacter);
+//				}
 			}
 		}
 	}
@@ -485,7 +495,7 @@ public class Application
 			isObstacle = false;
 		}
 		int numberOfPlayer = numberPlayer();
-		
+
 		if (numberOfPlayer == 2)
 		{
 			isPlayer = true;
@@ -493,7 +503,7 @@ public class Application
 
 		player1 = createPlayer(true, true);
 		player2 = createPlayer(false, isPlayer);
-		
+
 		playerList.add(player1);
 		playerList.add(player2);
 		play();
