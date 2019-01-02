@@ -119,7 +119,6 @@ public abstract class Obstacle
 	@Override
 	public String toString()
 	{
-		// TODO do a better toString
 		return sprite;
 	}
 }

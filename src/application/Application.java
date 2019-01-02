@@ -101,9 +101,8 @@ public class Application
 			do
 			{
 				ArrayList<Obstacle> obstacleList = new ArrayList<>();
-				//TODO add those back after debugging
-//				obstacleList.add(obstacleSpacing(1, newObstacle));
-//				obstacleList.add(obstacleSpacing(2, newObstacle));
+				obstacleList.add(obstacleSpacing(1, newObstacle));
+				obstacleList.add(obstacleSpacing(2, newObstacle));
 				obstacleList.add(obstacleSpacing(3, newObstacle));
 				obstacleList.add(obstacleSpacing(4, newObstacle));
 				for (int i = 0; i < obstacleList.size(); i++)

@@ -364,11 +364,10 @@ public abstract class Characters
 
 	}
 
-	// TODO Cannot receive negative value
-	// Can only remove armor
+	//Cannot receive negative value
 	public double armorDamage(double pDamage)
 	{
-		double reducedHit = pDamage / 2;
+		double reducedHit = Math.abs(pDamage / 2);
 		if (validateArmor(armor - reducedHit))
 		{
 			armor -= reducedHit;
@@ -382,11 +381,10 @@ public abstract class Characters
 		return reducedHit * 2;
 	}
 
-	// TODO Cannot receive negative value
-	// Only remove health/armor
+	//Cannot receive negative value
 	public void takeDamage(double pDamage)
 	{
-		double remainingDamage = pDamage;
+		double remainingDamage = Math.abs(pDamage);
 		if (armor != 0)
 		{
 			remainingDamage = armorDamage(pDamage);
@@ -534,7 +532,7 @@ public abstract class Characters
 		{
 			if (getStatus(StatusEnum.values()[i]))
 			{
-				currentStatus += StatusInfo.statusString(StatusEnum.values()[i]) + ", ";
+				currentStatus += StatusEnum.values()[i].toString() + ", ";
 			}
 		}
 		return currentStatus;
