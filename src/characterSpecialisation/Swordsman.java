@@ -1,7 +1,7 @@
 package characterSpecialisation;
 
 import character.Characters;
-import character.Status;
+import character.StatusEnum;
 import environement.TurnManagement;
 
 public class Swordsman extends Characters

@@ -1,7 +1,7 @@
 package characterSpecialisation;
 
 import character.Characters;
-import character.Status;
+import character.StatusEnum;
 import environement.TurnManagement;
 
 public class Archer extends Characters
@@ -12,7 +12,7 @@ public class Archer extends Characters
 	private static final double MAX_HEALTH = 30;
 	private static final double HEALING = 5;
 	private static final double ARMOR = 5;
-	private static final double DAMAGE = 5;
+	private static final double DAMAGE = 10;
 
 	public Archer(boolean pFacing, int pPosition)
 	{
@@ -35,11 +35,11 @@ public class Archer extends Characters
 
 	public void doAttack(Characters otherCharacter)
 	{
-		if (otherCharacter.getStatus(Status.BLOCKING))
+		if (otherCharacter.getStatus(StatusEnum.BLOCKING))
 		{
-			setStatus(Status.STUNNED);
-			otherCharacter.removeStatus(Status.STUNNED);
-			otherCharacter.removeStatus(Status.BLOCKING);
+			setStatus(StatusEnum.STUNNED);
+			otherCharacter.removeStatus(StatusEnum.STUNNED);
+			otherCharacter.removeStatus(StatusEnum.BLOCKING);
 		} else if (attackHit(otherCharacter.getPosition()))
 		{
 			otherCharacter.takeDamage(getDamage());

@@ -4,8 +4,7 @@ import java.util.ArrayList;
 
 import character.AI;
 import character.Characters;
-import character.Status;
-import character.StatusInfo;
+import character.StatusEnum;
 import characterSpecialisation.Alchemist;
 import characterSpecialisation.Archer;
 import characterSpecialisation.Assasin;
@@ -28,31 +27,14 @@ public class Application
 
 	static Characters player1 = null;
 	static Characters player2 = null;
+	static ArrayList<Characters> playerList = new ArrayList<>();
 	static Field playField = null;
 	static ArrayList<Obstacle> obstacle = new ArrayList<>();
 	static boolean isObstacle = true;
+	static boolean isPlayer = false;
 
 	public static void play()
 	{
-		playField = createField();
-		obstacle = createObstacle();
-		if (obstacle == null)
-		{
-			isObstacle = false;
-		}
-		int numberOfPlayer = numberPlayer();
-		boolean isPlayer = false;
-		if (numberOfPlayer == 2)
-		{
-			isPlayer = true;
-		}
-
-		player1 = createPlayer(true, true);
-		player2 = createPlayer(false, isPlayer);
-
-		ArrayList<Characters> playerList = new ArrayList<>();
-		playerList.add(player1);
-		playerList.add(player2);
 
 		boolean rotate = true;
 		int value;
@@ -119,8 +101,8 @@ public class Application
 			do
 			{
 				ArrayList<Obstacle> obstacleList = new ArrayList<>();
-//				obstacleList.add(obstacleSpacing(1, newObstacle));
-//				obstacleList.add(obstacleSpacing(2, newObstacle));
+				obstacleList.add(obstacleSpacing(1, newObstacle));
+				obstacleList.add(obstacleSpacing(2, newObstacle));
 				obstacleList.add(obstacleSpacing(3, newObstacle));
 				obstacleList.add(obstacleSpacing(4, newObstacle));
 				for (int i = 0; i < obstacleList.size(); i++)
@@ -261,7 +243,7 @@ public class Application
 		} else
 		{
 
-			if (currentCharacter.getStatus(Status.STUNNED))
+			if (currentCharacter.getStatus(StatusEnum.STUNNED))
 			{
 				move = 0;
 			} else
@@ -479,16 +461,16 @@ public class Application
 
 	public static void updateStatus(Characters currentCharacter)
 	{
-		for (int i = 1; i < Status.values().length; i++)
+		for (int i = 1; i < StatusEnum.values().length; i++)
 		{
-			if (currentCharacter.getStatus(character.Status.values()[i]))
+			if (currentCharacter.getStatus(character.StatusEnum.values()[i]))
 			{
-				if (TurnManagement.statusEnd(currentCharacter,character.Status.values()[i]))
+				if (TurnManagement.statusEnd(currentCharacter,character.StatusEnum.values()[i]))
 				{
-					currentCharacter.removeStatus(character.Status.values()[i]);
+					currentCharacter.removeStatus(character.StatusEnum.values()[i]);
 				} else
 				{
-					TurnManagement.statusActivate(character.Status.values()[i], currentCharacter);
+					TurnManagement.statusActivate(character.StatusEnum.values()[i], currentCharacter);
 				}
 			}
 		}
@@ -496,6 +478,24 @@ public class Application
 
 	public static void main(String[] args)
 	{
+		playField = createField();
+		obstacle = createObstacle();
+		if (obstacle == null)
+		{
+			isObstacle = false;
+		}
+		int numberOfPlayer = numberPlayer();
+		
+		if (numberOfPlayer == 2)
+		{
+			isPlayer = true;
+		}
+
+		player1 = createPlayer(true, true);
+		player2 = createPlayer(false, isPlayer);
+		
+		playerList.add(player1);
+		playerList.add(player2);
 		play();
 	}
 

@@ -3,7 +3,7 @@ package character;
 public class StatusInfo
 {
 
-	public static String statusString(Status pStatus)
+	public static String statusString(StatusEnum pStatus)
 	{
 		String currentStatus = "";
 		switch (pStatus)

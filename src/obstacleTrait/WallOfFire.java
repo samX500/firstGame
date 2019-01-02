@@ -1,7 +1,7 @@
 package obstacleTrait;
 
 import character.Characters;
-import character.Status;
+import character.StatusEnum;
 import environement.Obstacle;
 
 public class WallOfFire extends Obstacle
@@ -15,7 +15,7 @@ public class WallOfFire extends Obstacle
 	@Override
 	public void obstEffect(Characters currentCharacter)
 	{
-		currentCharacter.setStatus(Status.BURNED);
+		currentCharacter.setStatus(StatusEnum.BURNED);
 		
 	}
 

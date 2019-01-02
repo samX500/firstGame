@@ -1,7 +1,7 @@
 package characterSpecialisation;
 
 import character.Characters;
-import character.Status;
+import character.StatusEnum;
 import environement.TurnManagement;
 
 public class LanceMan extends Characters
@@ -26,7 +26,7 @@ public class LanceMan extends Characters
 			setRange(20);
 			attack(otherCharacter);
 			setRange(5);
-			setStatus(Status.STUNNED);
+			setStatus(StatusEnum.STUNNED);
 		}
 	}
 }

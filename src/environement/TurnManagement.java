@@ -1,7 +1,7 @@
 package environement;
 
 import character.Characters;
-import character.Status;
+import character.StatusEnum;
 
 public class TurnManagement
 {
@@ -106,7 +106,7 @@ public class TurnManagement
 		return canSpecial;
 	}
 
-	public static void statusStart(Characters currentCharacter, Status pStatus)
+	public static void statusStart(Characters currentCharacter, StatusEnum pStatus)
 	{
 		boolean isPlayer1 = false;
 		if (currentCharacter.getFacing())
@@ -136,7 +136,7 @@ public class TurnManagement
 		}
 	}
 
-	public static boolean statusEnd(Characters currentCharacter, Status pStatus)
+	public static boolean statusEnd(Characters currentCharacter, StatusEnum pStatus)
 	{
 		boolean satusEnd = false;
 		switch (pStatus)
@@ -162,7 +162,7 @@ public class TurnManagement
 		return satusEnd;
 	}
 
-	public static int playerTimer(Characters currentCharacter, Status pStatus)
+	public static int playerTimer(Characters currentCharacter, StatusEnum pStatus)
 	{
 		boolean isPlayer1 = false;
 		int timer = 0;
@@ -195,7 +195,7 @@ public class TurnManagement
 		return timer;
 	}
 
-	public static void statusActivate(Status pStatus, Characters currentCharacter)
+	public static void statusActivate(StatusEnum pStatus, Characters currentCharacter)
 	{
 		switch (pStatus)
 		{
@@ -214,18 +214,6 @@ public class TurnManagement
 			currentCharacter.burnDamage();
 			break;
 		}
-	}
-
-	private static void blockingTime(boolean isPlayer1)
-	{
-		if (isPlayer1)
-		{
-			statBlockP1 = currentTurn;
-		} else
-		{
-			statBlockP2 = currentTurn;
-		}
-
 	}
 
 	private static boolean blockOver(int timer)

@@ -1,7 +1,7 @@
 package characterSpecialisation;
 
 import character.Characters;
-import character.Status;
+import character.StatusEnum;
 import environement.TurnManagement;
 
 public class Assasin extends Characters
@@ -22,7 +22,7 @@ private static final double DAMAGE = 0;
 	{
 		if (attackHit(otherCharacter.getPosition()))
 		{
-			otherCharacter.setStatus(Status.STUNNED);
+			otherCharacter.setStatus(StatusEnum.STUNNED);
 		}
 	}
 
@@ -32,7 +32,7 @@ private static final double DAMAGE = 0;
 
 		if (TurnManagement.canBeSpecialing(getFacing()))
 		{
-			if (otherCharacter.getStatus(Status.STUNNED) && attackHit(otherCharacter.getPosition()))
+			if (otherCharacter.getStatus(StatusEnum.STUNNED) && attackHit(otherCharacter.getPosition()))
 			{
 				otherCharacter.changeHealth(-otherCharacter.getMaxHealth());
 			}

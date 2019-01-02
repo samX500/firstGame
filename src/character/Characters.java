@@ -46,7 +46,7 @@ public abstract class Characters
 
 	private int position;
 	private double health;
-	private ArrayList<Status> status = new ArrayList<>();
+	private ArrayList<StatusEnum> status = new ArrayList<>();
 
 	public Characters()
 	{
@@ -71,7 +71,7 @@ public abstract class Characters
 			setDamage(pDamage);
 			setFacing(pFacing);
 
-			setStatus(Status.NO_STATUS);
+			setStatus(StatusEnum.NO_STATUS);
 			setHealth(pMaxHealth);
 			setPosition(pPosition);
 
@@ -86,7 +86,7 @@ public abstract class Characters
 			setDamage(DEFAULT_DAMAGE);
 			setFacing(DEFAULT_FACING);
 
-			setStatus(Status.NO_STATUS);
+			setStatus(StatusEnum.NO_STATUS);
 			setHealth(DEFAULT_MAX_HEALTH);
 			setPosition(DEFAULT_POSITION);
 		}
@@ -255,12 +255,12 @@ public abstract class Characters
 
 	}
 
-	public boolean getStatus(Status pStatus)
+	public boolean getStatus(StatusEnum pStatus)
 	{
 		return status.contains(pStatus);
 	}
 
-	public void setStatus(Status pStatus)
+	public void setStatus(StatusEnum pStatus)
 	{
 		if (getStatus(pStatus))
 		{
@@ -272,17 +272,17 @@ public abstract class Characters
 		}
 		if (!noStatus())
 		{
-			removeStatus(Status.NO_STATUS);
+			removeStatus(StatusEnum.NO_STATUS);
 		}
 		TurnManagement.statusStart(this,pStatus);
 	}
 
-	public void removeStatus(Status pStatus)
+	public void removeStatus(StatusEnum pStatus)
 	{
 		status.remove(pStatus);
 		if (noStatus())
 		{
-			setStatus(Status.NO_STATUS);
+			setStatus(StatusEnum.NO_STATUS);
 		}
 
 	}
@@ -290,9 +290,9 @@ public abstract class Characters
 	public boolean noStatus()
 	{
 		boolean noStatus = true;
-		for (int i = 1; i < Status.values().length; i++)
+		for (int i = 1; i < StatusEnum.values().length; i++)
 		{
-			if (status.contains(Status.values()[i]))
+			if (status.contains(StatusEnum.values()[i]))
 			{
 				noStatus = false;
 			}
@@ -393,11 +393,11 @@ public abstract class Characters
 
 	public void attack(Characters otherCharacter)
 	{
-		if (otherCharacter.getStatus(Status.BLOCKING))
+		if (otherCharacter.getStatus(StatusEnum.BLOCKING))
 		{
-			setStatus(Status.STUNNED);
-			otherCharacter.removeStatus(Status.STUNNED);
-			otherCharacter.removeStatus(Status.BLOCKING);
+			setStatus(StatusEnum.STUNNED);
+			otherCharacter.removeStatus(StatusEnum.STUNNED);
+			otherCharacter.removeStatus(StatusEnum.BLOCKING);
 		} else if (attackHit(otherCharacter.getPosition()))
 		{
 			otherCharacter.takeDamage(damage);
@@ -429,9 +429,8 @@ public abstract class Characters
 	{
 		if (TurnManagement.canBeBlocking(facingRight))
 		{
-			// TODO this is so fucking sloppy
-			setStatus(Status.BLOCKING);
-			setStatus(Status.STUNNED);
+			setStatus(StatusEnum.BLOCKING);
+			setStatus(StatusEnum.STUNNED);
 		}
 	}
 
@@ -439,20 +438,19 @@ public abstract class Characters
 	{
 		if (position == otherCharacter.getPosition())
 		{
-			otherCharacter.setStatus(Status.STUNNED);
-			if (otherCharacter.getStatus(Status.BLOCKING))
+			otherCharacter.setStatus(StatusEnum.STUNNED);
+			if (otherCharacter.getStatus(StatusEnum.BLOCKING))
 			{
-				otherCharacter.removeStatus(Status.BLOCKING);
+				otherCharacter.removeStatus(StatusEnum.BLOCKING);
 			}
 		}
 	}
 
 	public abstract void specialAttack(Characters otherCharacter);
 
-	// TODO this can stack and it shouldn't
 	public int slowed(int pMouvement)
 	{
-		if (this.getStatus(Status.SLOWED))
+		if (this.getStatus(StatusEnum.SLOWED))
 		{
 			pMouvement /= 2;
 		}
@@ -482,11 +480,11 @@ public abstract class Characters
 	public String statusToString()
 	{
 		String currentStatus = "";
-		for (int i = 0; i < Status.values().length; i++)
+		for (int i = 0; i < StatusEnum.values().length; i++)
 		{
-			if (getStatus(Status.values()[i]))
+			if (getStatus(StatusEnum.values()[i]))
 			{
-				currentStatus += StatusInfo.statusString(Status.values()[i]) + ", ";
+				currentStatus += StatusInfo.statusString(StatusEnum.values()[i]) + ", ";
 			}
 		}
 		return currentStatus;
@@ -494,7 +492,6 @@ public abstract class Characters
 
 	public String toString()
 	{
-		// TODO will have to review this later
 		return name + ": [Speed: " + speed + "] [Range: " + range + "] [Maximum Health: " + maxHealth + "] [Healing: "
 				+ healing + "] [Armor: " + armor + "] [Damage: " + damage + "]";
 	}

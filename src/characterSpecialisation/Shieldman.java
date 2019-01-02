@@ -1,7 +1,7 @@
 package characterSpecialisation;
 
 import character.Characters;
-import character.Status;
+import character.StatusEnum;
 import environement.TurnManagement;
 
 public class Shieldman extends Characters
@@ -23,11 +23,11 @@ public class Shieldman extends Characters
 	{
 		if (TurnManagement.canBeSpecialing(getFacing()))
 		{
-			if (otherCharacter.getStatus(Status.BLOCKING))
+			if (otherCharacter.getStatus(StatusEnum.BLOCKING))
 			{
 				setDamage(getDamage()*2);
-				otherCharacter.removeStatus(Status.BLOCKING);
-				otherCharacter.removeStatus(Status.STUNNED);
+				otherCharacter.removeStatus(StatusEnum.BLOCKING);
+				otherCharacter.removeStatus(StatusEnum.STUNNED);
 			}
 			attack(otherCharacter);
 			setDamage(getDamage()/2);
