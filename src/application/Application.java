@@ -354,36 +354,10 @@ public class Application
 
 	public static String createDisplay(Characters currentCharacter)
 	{
-		String canHeal;
-		String canBlock;
-		String canSpecial;
-
-		String player = "Player 2 ";
-		if (currentCharacter == player1)
-		{
-			player = "Player 1 ";
-		}
-		if (TurnManagement.canHeal(currentCharacter.getFacing()))
-		{
-			canHeal = "can heal";
-		} else
-		{
-			canHeal = "can't heal";
-		}
-		if (TurnManagement.canBlock(currentCharacter.getFacing()))
-		{
-			canBlock = "can block";
-		} else
-		{
-			canBlock = "can't block";
-		}
-		if (TurnManagement.canSpecial(currentCharacter.getFacing()))
-		{
-			canSpecial = "can special";
-		} else
-		{
-			canSpecial = "can't special";
-		}
+		String player = " Player " + (currentCharacter == player1?"1":"2");
+		String canHeal = "can" + (TurnManagement.canHeal(currentCharacter.getFacing())?"'t ":" ")+ "heal";
+		String canBlock = "can" + (TurnManagement.canBlock(currentCharacter.getFacing())?"'t ":" ")+ "block";
+		String canSpecial = "can" + (TurnManagement.canSpecial(currentCharacter.getFacing())?"'t ":" ")+ "special";
 
 		String message1 = "Turn " + TurnManagement.getTurn() + " " + player + "choose your move\n";
 		String message2 = "1: Move forward   2: Move backward   3: Jump   4: Attack    5: Heal   6: Block   7: Grab   8: Special attack\n\n";
