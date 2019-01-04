@@ -281,7 +281,6 @@ public abstract class Characters
 			removeStatus(StatusEnum.NO_STATUS);
 		}
 		statusObject.get(findObject(pStatus)).statusStart(facingRight);
-		//TurnManagement.statusStart(this,pStatus);
 	}
 
 	public void removeStatus(StatusEnum pStatus)

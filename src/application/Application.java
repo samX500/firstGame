@@ -29,7 +29,7 @@ public class Application
 	static Characters player2 = null;
 	static ArrayList<Characters> playerList = new ArrayList<>();
 	static Field playField = null;
-	static ArrayList<Obstacle> obstacle = new ArrayList<>();
+	public static ArrayList<Obstacle> obstacle = new ArrayList<>();
 	static boolean isObstacle = true;
 	static boolean isPlayer = false;
 
@@ -49,8 +49,10 @@ public class Application
 			{
 				takeTurn(playerList.get(value), false);
 			}
-			standOnObstacle(playerList.get(0));
-			standOnObstacle(playerList.get(1));
+			obstacleDetection(playerList.get(0), playerList.get(0).getPosition());
+			obstacleDetection(playerList.get(1), playerList.get(1).getPosition());
+//			standOnObstacle(playerList.get(0));
+//			standOnObstacle(playerList.get(1));
 			TurnManagement.newTurn();
 			updateStatus(playerList.get(0));
 			updateStatus(playerList.get(1));
@@ -234,12 +236,12 @@ public class Application
 
 	public static void takeTurn(Characters currentCharacter, boolean isPlayer)
 	{
-		int move;
+		int move = 0;
 		Characters otherCharacter = findOtherCharacter(currentCharacter);
 
 		if (!isPlayer)
 		{
-			move = AI.aiTurn(currentCharacter, otherCharacter);
+			AI.aiTurn(currentCharacter, otherCharacter);
 		} else
 		{
 
@@ -327,17 +329,17 @@ public class Application
 	{
 		for (int i = 0; i < obstacle.size(); i++)
 		{
-			obstacle.get(i).passTrough(currentCharacter, lastPosition);
+			obstacle.get(i).obstHit(currentCharacter, lastPosition);
 		}
 	}
 
-	public static void standOnObstacle(Characters currentCharacter)
-	{
-		for (int i = 0; i < obstacle.size(); i++)
-		{
-			obstacle.get(i).standOn(currentCharacter);
-		}
-	}
+//	public static void standOnObstacle(Characters currentCharacter)
+//	{
+//		for (int i = 0; i < obstacle.size(); i++)
+//		{
+//			obstacle.get(i).standOn(currentCharacter);
+//		}
+//	}
 
 	public static Characters findOtherCharacter(Characters currentCharacter)
 	{
@@ -448,13 +450,7 @@ public class Application
 					Characters.getStatusObject().get(Characters.findObject(character.StatusEnum.values()[i]))
 							.statusActivate(currentCharacter);
 				}
-//				if (TurnManagement.statusEnd(currentCharacter,character.StatusEnum.values()[i]))
-//				{
-//					currentCharacter.removeStatus(character.StatusEnum.values()[i]);
-//				} else
-//				{
-//					TurnManagement.statusActivate(character.StatusEnum.values()[i], currentCharacter);
-//				}
+
 			}
 		}
 	}

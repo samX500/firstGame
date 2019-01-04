@@ -12,7 +12,7 @@ public class LanceMan extends Characters
 	private static final double MAX_HEALTH = 30;
 	private static final double HEALING = 5;
 	private static final double ARMOR = 5;
-	private static final double DAMAGE = 5;
+	private static final double DAMAGE = 10;
 	public LanceMan(boolean pFacing, int pPosition)
 	{
 		super(NAME, RANGE,SPEED, MAX_HEALTH, HEALING,ARMOR, DAMAGE, pFacing, pPosition);

@@ -72,8 +72,21 @@ public abstract class Obstacle
 		return Math.abs(position - otherObstacle.getPosition());
 	}
 
-	public void passTrough(Characters currentCharacter, int lastPosition)
+	public void obstHit(Characters currentCharacter, int lastPosition)
 	{
+		if(passTrough(currentCharacter, lastPosition))
+		{
+			obstEffect(currentCharacter);
+		}
+		else if(standOn(currentCharacter.getPosition()))
+		{
+			obstEffect(currentCharacter);
+		}
+	}
+	
+	public boolean passTrough(Characters currentCharacter, int lastPosition)
+	{
+		boolean passedTrough = false;
 		if (currentCharacter.getFacing())
 		{
 			for (int i = 0; i < lenght; i++)
@@ -81,10 +94,10 @@ public abstract class Obstacle
 				if (lastPosition > currentCharacter.getPosition()
 						&& (currentCharacter.getPosition() < allPosition[i] && lastPosition > allPosition[i]))
 				{
-					obstEffect(currentCharacter);
+					passedTrough = true;
 				} else if ((lastPosition < allPosition[i] && currentCharacter.getPosition() > allPosition[i]))
 				{
-					obstEffect(currentCharacter);
+					passedTrough = true;
 				}
 			}
 		} else
@@ -94,24 +107,27 @@ public abstract class Obstacle
 				if (lastPosition < currentCharacter.getPosition()
 						&& (currentCharacter.getPosition() > allPosition[i] && lastPosition < allPosition[i]))
 				{
-					obstEffect(currentCharacter);
+					passedTrough = true;
 				} else if ((lastPosition > allPosition[i] && currentCharacter.getPosition() < allPosition[i]))
 				{
-					obstEffect(currentCharacter);
+					passedTrough = true;
 				}
 			}
 		}
+		return passedTrough;
 	}
 
-	public void standOn(Characters currentCharacter)
+	public boolean standOn(int pPosition)
 	{
+		boolean passedTrough = false;
 		for (int i = 0; i < lenght; i++)
 		{
-			if (currentCharacter.getPosition() == allPosition[i])
+			if (pPosition == allPosition[i])
 			{
-				obstEffect(currentCharacter);
+				passedTrough = true;
 			}
 		}
+		return passedTrough;
 	}
 
 	public abstract void obstEffect(Characters currentCharacter);
