@@ -11,7 +11,7 @@ public class AI
 
 	public static void aiTurn(Characters currentCharacter, Characters otherCharacter)
 	{
-
+		aiMoveToOpponent(currentCharacter, otherCharacter);
 	}
 
 	public static void findObstacle()
@@ -60,17 +60,57 @@ public class AI
 		{
 			goal = otherCharacter.getPosition() + currentCharacter.getRange();
 
-			if (goal <= (currentCharacter.getPosition() - currentCharacter.getSpeed()))
+			if (goal >= (currentCharacter.getPosition() - currentCharacter.getSpeed()))
 			{
 
-				if (aiStandOn(goal))
+				if (aiStandOn(goal) && (currentCharacter.getPosition() - currentCharacter.getSpeed()) == goal)
 				{
 					currentCharacter.jump(0);
 				} else if (aiPassTrough(currentCharacter, goal))
 				{
 					currentCharacter.moveForward(currentCharacter.getPosition() - goal + 1);
+				} else if (aiStandOn(currentCharacter.getPosition() - 1))
+				{
+					int mouvement = 0;
+					while (aiStandOn(currentCharacter.getPosition() - mouvement - 1))
+					{
+						mouvement++;
+					}
+					currentCharacter.moveForward(mouvement);
+				} else if(currentCharacter.validateMouvement(currentCharacter.getPosition()-currentCharacter.getSpeed()))
+				{
+					currentCharacter.jump(0);
+				}
+				else
+				{
+					currentCharacter.moveForward(currentCharacter.getPosition() - goal + 1);
 				}
 
+			} else
+			{
+				if (aiStandOn(currentCharacter.getPosition() - currentCharacter.getSpeed())
+						&& (currentCharacter.getPosition() - currentCharacter.getSpeed()) == goal)
+				{
+					currentCharacter.jump(0);
+				} else if (aiStandOn(currentCharacter.getPosition() - 1))
+				{
+					int mouvement = 0;
+					boolean exitLoop = false;
+					while ((aiStandOn(currentCharacter.getPosition() - mouvement - 1)) && !exitLoop)
+					{
+						if (mouvement >= currentCharacter.getSpeed())
+						{
+							exitLoop = true;
+						} else
+						{
+							mouvement++;
+						}
+					}
+					currentCharacter.moveForward(mouvement);
+				} else
+				{
+					currentCharacter.jump(0);
+				}
 			}
 		} else
 		{

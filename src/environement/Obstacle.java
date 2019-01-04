@@ -74,6 +74,7 @@ public abstract class Obstacle
 
 	public void obstHit(Characters currentCharacter, int lastPosition)
 	{
+		//TODO what if current position = lastPosition
 		if(passTrough(currentCharacter, lastPosition))
 		{
 			obstEffect(currentCharacter);

@@ -35,17 +35,16 @@ public class Application
 
 	public static void play()
 	{
-
 		boolean rotate = true;
 		int value;
 		do
 		{
 			value = rotate ? 0 : 1;
 
-			if (isPlayer)
+			if (value == 0 || (isPlayer && value == 1))
 			{
 				takeTurn(playerList.get(value), true);
-			} else
+			} else if ((!isPlayer && value == 1))
 			{
 				takeTurn(playerList.get(value), false);
 			}
@@ -356,10 +355,10 @@ public class Application
 
 	public static String createDisplay(Characters currentCharacter)
 	{
-		String player = " Player " + (currentCharacter == player1?"1":"2");
-		String canHeal = "can" + (TurnManagement.canHeal(currentCharacter.getFacing())?"'t ":" ")+ "heal";
-		String canBlock = "can" + (TurnManagement.canBlock(currentCharacter.getFacing())?"'t ":" ")+ "block";
-		String canSpecial = "can" + (TurnManagement.canSpecial(currentCharacter.getFacing())?"'t ":" ")+ "special";
+		String player = " Player " + (currentCharacter == player1 ? "1" : "2");
+		String canHeal = "can" + (TurnManagement.canHeal(currentCharacter.getFacing()) ? " " : "'t ") + "heal";
+		String canBlock = "can" + (TurnManagement.canBlock(currentCharacter.getFacing()) ? " " : "'t ") + "block";
+		String canSpecial = "can" + (TurnManagement.canSpecial(currentCharacter.getFacing()) ? " " : "'t ") + "special";
 
 		String message1 = "Turn " + TurnManagement.getTurn() + " " + player + "choose your move\n";
 		String message2 = "1: Move forward   2: Move backward   3: Jump   4: Attack    5: Heal   6: Block   7: Grab   8: Special attack\n\n";

@@ -32,9 +32,6 @@ public abstract class Characters
 	private static final double MIN_DAMAGE = 0;
 	private static final double MAX_DAMAGE = 200;
 
-	private static final double BURN_DAMAGE = 3;
-	private static final double POIS_DAMAGE = 3;
-
 	private String name;
 	private int range;
 	private int speed;
@@ -502,16 +499,6 @@ public abstract class Characters
 			pMouvement /= 2;
 		}
 		return pMouvement == 0 ? 1 : pMouvement;
-	}
-
-	public void poisDamage()
-	{
-		changeHealth(-POIS_DAMAGE);
-	}
-
-	public void burnDamage()
-	{
-		changeHealth(-BURN_DAMAGE);
 	}
 
 	public int getDistance(Characters otherCharacter)
