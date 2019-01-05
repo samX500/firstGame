@@ -395,7 +395,7 @@ public abstract class Characters
 
 		if (validateMouvement(pMouvement) && Field.validatePosition(position + pMouvement * direction))
 		{
-			Application.obstacleDetection(this, (position + pMouvement * direction));
+			Application.passTroughObst(this, (position + pMouvement * direction));
 			setPosition(position + (pMouvement * direction));
 		}
 
@@ -409,12 +409,12 @@ public abstract class Characters
 
 		if (validateMouvement(pMouvement) && Field.validatePosition(position - (pMouvement * direction)))
 		{
-			Application.obstacleDetection(this, (position - pMouvement * direction));
+			Application.passTroughObst(this, (position - pMouvement * direction));
 			setPosition(position - (pMouvement * direction));
 		}
 
 	}
-
+	
 	public void jump(int pJumpSide)
 	{
 		int jumpSide = pJumpSide == 0 ? 1 : -1;

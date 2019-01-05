@@ -8,7 +8,7 @@ public class Field
 	private static int DEFAULT_LENGHT = 25;
 
 	public static final int MIN_LENGHT = 5;
-	public static final int MAX_LENGHT = 100;
+	public static final int MAX_LENGHT = 1000;
 
 	private static int lenght;
 

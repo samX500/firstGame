@@ -72,14 +72,17 @@ public abstract class Obstacle
 		return Math.abs(position - otherObstacle.getPosition());
 	}
 
-	public void obstHit(Characters currentCharacter, int lastPosition)
+	public void passTroughHit(Characters currentCharacter, int lastPosition)
 	{
-		//TODO what if current position = lastPosition
 		if(passTrough(currentCharacter, lastPosition))
 		{
 			obstEffect(currentCharacter);
 		}
-		else if(standOn(currentCharacter.getPosition()))
+		
+	}
+	public void standOnHit(Characters currentCharacter)
+	{
+		if(standOn(currentCharacter.getPosition()))
 		{
 			obstEffect(currentCharacter);
 		}

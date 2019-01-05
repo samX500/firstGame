@@ -48,10 +48,8 @@ public class Application
 			{
 				takeTurn(playerList.get(value), false);
 			}
-			obstacleDetection(playerList.get(0), playerList.get(0).getPosition());
-			obstacleDetection(playerList.get(1), playerList.get(1).getPosition());
-//			standOnObstacle(playerList.get(0));
-//			standOnObstacle(playerList.get(1));
+			obstacleDetection(playerList.get(0));
+			obstacleDetection(playerList.get(1));
 			TurnManagement.newTurn();
 			updateStatus(playerList.get(0));
 			updateStatus(playerList.get(1));
@@ -80,7 +78,7 @@ public class Application
 		int fieldLenght;
 		do
 		{
-			fieldLenght = Input.askInt("What field lenght do you want to play on? (lenght between 5 and 100)");
+			fieldLenght = Input.askInt("What field lenght do you want to play on? (lenght between 5 and 1000)");
 		} while (fieldLenght < Field.MIN_LENGHT || fieldLenght > Field.MAX_LENGHT);
 
 		return new Field(fieldLenght);
@@ -324,21 +322,21 @@ public class Application
 		return side;
 	}
 
-	public static void obstacleDetection(Characters currentCharacter, int lastPosition)
+	public static void obstacleDetection(Characters currentCharacter)
 	{
 		for (int i = 0; i < obstacle.size(); i++)
 		{
-			obstacle.get(i).obstHit(currentCharacter, lastPosition);
+			obstacle.get(i).standOnHit(currentCharacter);
 		}
 	}
-
-//	public static void standOnObstacle(Characters currentCharacter)
-//	{
-//		for (int i = 0; i < obstacle.size(); i++)
-//		{
-//			obstacle.get(i).standOn(currentCharacter);
-//		}
-//	}
+	
+	public static void passTroughObst(Characters currentCharacter,int lastPosition)
+	{
+		for (int i = 0; i < obstacle.size(); i++)
+		{
+			obstacle.get(i).passTroughHit(currentCharacter, lastPosition);
+		}
+	}
 
 	public static Characters findOtherCharacter(Characters currentCharacter)
 	{
@@ -356,9 +354,9 @@ public class Application
 	public static String createDisplay(Characters currentCharacter)
 	{
 		String player = " Player " + (currentCharacter == player1 ? "1" : "2");
-		String canHeal = "can" + (TurnManagement.canHeal(currentCharacter.getFacing()) ? " " : "'t ") + "heal";
-		String canBlock = "can" + (TurnManagement.canBlock(currentCharacter.getFacing()) ? " " : "'t ") + "block";
-		String canSpecial = "can" + (TurnManagement.canSpecial(currentCharacter.getFacing()) ? " " : "'t ") + "special";
+		String canHeal = "can " + (TurnManagement.canHeal(currentCharacter.getFacing()) ? " " : "'t ") + "heal";
+		String canBlock = "can " + (TurnManagement.canBlock(currentCharacter.getFacing()) ? " " : "'t ") + "block";
+		String canSpecial = "can " + (TurnManagement.canSpecial(currentCharacter.getFacing()) ? " " : "'t ") + "special";
 
 		String message1 = "Turn " + TurnManagement.getTurn() + " " + player + "choose your move\n";
 		String message2 = "1: Move forward   2: Move backward   3: Jump   4: Attack    5: Heal   6: Block   7: Grab   8: Special attack\n\n";
@@ -414,6 +412,7 @@ public class Application
 
 				else
 				{
+					//TODO some obstacle seem to not exist
 					for (int j = 0; j < obstacle.size(); j++)
 					{
 
