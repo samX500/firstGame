@@ -7,6 +7,12 @@ public class Status
 	private static final double BURN_DAMAGE = 3;
 	private static final double POIS_DAMAGE = 3;
 
+	private static final int BLOCK_DURATION = 3;
+	private static final int STUN_DURATION = 3;
+	private static final int SLOW_DURATION = 3;
+	private static final int POIS_DURATION = 3;
+	private static final int BURN_DURATION = 3;
+
 	private int turnGottenP1;
 	private int turnGottenP2;
 	private int duration;
@@ -49,19 +55,19 @@ public class Status
 			duration = 0;
 			break;
 		case BLOCKING:
-			duration = 3;
+			duration = BLOCK_DURATION;
 			break;
 		case STUNNED:
-			duration = 3;
+			duration = STUN_DURATION;
 			break;
 		case SLOWED:
-			duration = 3;
+			duration = SLOW_DURATION;
 			break;
 		case POISONED:
-			duration = 5;
+			duration = POIS_DURATION;
 			break;
 		case BURNED:
-			duration = 5;
+			duration = BURN_DURATION;
 			break;
 		}
 

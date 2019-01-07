@@ -8,6 +8,7 @@ import environement.Obstacle;
 public class AI
 {
 	private static ArrayList<Integer> obstaclePosition = new ArrayList<>();
+	public static int goal;
 
 	public static void aiTurn(Characters currentCharacter, Characters otherCharacter)
 	{
@@ -42,7 +43,7 @@ public class AI
 
 	public static void aiMoveToOpponent(Characters currentCharacter, Characters otherCharacter)
 	{
-		int goal;
+		
 
 		if (currentCharacter.getPosition() > otherCharacter.getPosition())
 		{
@@ -87,7 +88,7 @@ public class AI
 		} else
 		{
 			//TODO debug the backward thing
-			if ((otherCharacter.getPosition() - currentCharacter.getRange()) >= (currentCharacter.getPosition()
+			if ((otherCharacter.getPosition() - currentCharacter.getRange()) <= (currentCharacter.getPosition()
 					+ currentCharacter.getSpeed()))
 			{
 				goal = otherCharacter.getPosition() - currentCharacter.getRange();

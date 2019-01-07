@@ -368,7 +368,7 @@ public class Application
 		String message6 = "\n\nPlayer 1: " + player1 + "\n\nPlayer 2: " + player2 + "\n\nThe distance between you is "
 				+ currentCharacter.getDistance(findOtherCharacter(currentCharacter));
 
-		return message1 + message2 + message3 + message4 + message5 + message6 + "\n" + debugObstacle()
+		return message1 + message2 + message3 + message4 + message5 + message6 + "\n" + debugObstacle() + AI.goal
 				+ currentField();
 	}
 
