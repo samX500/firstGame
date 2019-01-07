@@ -5,11 +5,15 @@ import character.StatusEnum;
 import environement.Obstacle;
 
 public class WallOfFire extends Obstacle
+
 {
 
+	private static final String SPRITE = "🔥 ";
+	
 	public WallOfFire()
 	{
-		super("🔥 ");
+		
+		super(SPRITE);
 	}
 
 	@Override

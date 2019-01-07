@@ -6,7 +6,7 @@ public abstract class Obstacle
 {
 	private static final int MAX_LENGHT = 3;
 	private static final int MIN_LENGHT = 1;
-	private static final int MAX_POSITION = Field.getLenght() - 5;
+	private static final int MAX_POSITION = Field.getLenght() - 7;
 	private static final int MIN_POSITION = 5;
 
 	private int position;
@@ -14,12 +14,11 @@ public abstract class Obstacle
 	private String sprite;
 
 	private int[] allPosition;
-
+	
 	public Obstacle(String pSprite)
 	{
-		setPosition();
 		setLenght();
-		setAllPosition();
+		setPosition();
 		setSprite(pSprite);
 	}
 
@@ -31,6 +30,7 @@ public abstract class Obstacle
 	public void setPosition()
 	{
 		position = (int) (Math.random() * (MAX_POSITION - MIN_POSITION + 1) + MIN_POSITION);
+		setAllPosition();
 	}
 
 	public int getLenght()
@@ -43,9 +43,14 @@ public abstract class Obstacle
 		lenght = (int) (Math.random() * (MAX_LENGHT - MIN_LENGHT + 1) + MIN_LENGHT);
 	}
 
-	public int[] getAllPosition()
+	public String getAllPosition()
 	{
-		return allPosition;
+		String pAllPosition = "";
+		for(int i = 0; i < lenght;i++)
+		{
+			pAllPosition += allPosition[i] + ", ";
+		}
+		return pAllPosition;
 	}
 
 	public void setAllPosition()
@@ -74,7 +79,7 @@ public abstract class Obstacle
 
 	public void passTroughHit(Characters currentCharacter, int lastPosition)
 	{
-		if(passTrough(currentCharacter, lastPosition))
+		for(int i = 0; i < passTrough(currentCharacter, lastPosition);i++)
 		{
 			obstEffect(currentCharacter);
 		}
@@ -88,9 +93,9 @@ public abstract class Obstacle
 		}
 	}
 	
-	public boolean passTrough(Characters currentCharacter, int lastPosition)
+	public int passTrough(Characters currentCharacter, int lastPosition)
 	{
-		boolean passedTrough = false;
+		int passedTrough = 0;
 		if (currentCharacter.getFacing())
 		{
 			for (int i = 0; i < lenght; i++)
@@ -98,10 +103,10 @@ public abstract class Obstacle
 				if (lastPosition > currentCharacter.getPosition()
 						&& (currentCharacter.getPosition() < allPosition[i] && lastPosition > allPosition[i]))
 				{
-					passedTrough = true;
+					passedTrough++;
 				} else if ((lastPosition < allPosition[i] && currentCharacter.getPosition() > allPosition[i]))
 				{
-					passedTrough = true;
+					passedTrough++;
 				}
 			}
 		} else
@@ -111,10 +116,10 @@ public abstract class Obstacle
 				if (lastPosition < currentCharacter.getPosition()
 						&& (currentCharacter.getPosition() > allPosition[i] && lastPosition < allPosition[i]))
 				{
-					passedTrough = true;
+					passedTrough++;
 				} else if ((lastPosition > allPosition[i] && currentCharacter.getPosition() < allPosition[i]))
 				{
-					passedTrough = true;
+					passedTrough++;
 				}
 			}
 		}
@@ -123,15 +128,15 @@ public abstract class Obstacle
 
 	public boolean standOn(int pPosition)
 	{
-		boolean passedTrough = false;
+		boolean standOn = false;
 		for (int i = 0; i < lenght; i++)
 		{
 			if (pPosition == allPosition[i])
 			{
-				passedTrough = true;
+				standOn = true;
 			}
 		}
-		return passedTrough;
+		return standOn;
 	}
 
 	public abstract void obstEffect(Characters currentCharacter);

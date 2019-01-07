@@ -329,8 +329,8 @@ public class Application
 			obstacle.get(i).standOnHit(currentCharacter);
 		}
 	}
-	
-	public static void passTroughObst(Characters currentCharacter,int lastPosition)
+
+	public static void passTroughObst(Characters currentCharacter, int lastPosition)
 	{
 		for (int i = 0; i < obstacle.size(); i++)
 		{
@@ -356,7 +356,8 @@ public class Application
 		String player = " Player " + (currentCharacter == player1 ? "1" : "2");
 		String canHeal = "can " + (TurnManagement.canHeal(currentCharacter.getFacing()) ? " " : "'t ") + "heal";
 		String canBlock = "can " + (TurnManagement.canBlock(currentCharacter.getFacing()) ? " " : "'t ") + "block";
-		String canSpecial = "can " + (TurnManagement.canSpecial(currentCharacter.getFacing()) ? " " : "'t ") + "special";
+		String canSpecial = "can " + (TurnManagement.canSpecial(currentCharacter.getFacing()) ? " " : "'t ")
+				+ "special";
 
 		String message1 = "Turn " + TurnManagement.getTurn() + " " + player + "choose your move\n";
 		String message2 = "1: Move forward   2: Move backward   3: Jump   4: Attack    5: Heal   6: Block   7: Grab   8: Special attack\n\n";
@@ -367,7 +368,8 @@ public class Application
 		String message6 = "\n\nPlayer 1: " + player1 + "\n\nPlayer 2: " + player2 + "\n\nThe distance between you is "
 				+ currentCharacter.getDistance(findOtherCharacter(currentCharacter));
 
-		return message1 + message2 + message3 + message4 + message5 + message6 + "\n" + currentField();
+		return message1 + message2 + message3 + message4 + message5 + message6 + "\n" + debugObstacle()
+				+ currentField();
 	}
 
 	public static String currentField()
@@ -384,7 +386,7 @@ public class Application
 					currentField += "12";
 				} else if (i == player1.getPosition())
 				{
-					currentField += "1_ ";
+					currentField += " 1 ";
 				} else if (i == player2.getPosition())
 				{
 					currentField += " 2 ";
@@ -404,7 +406,7 @@ public class Application
 					obstacleField += "12";
 				} else if (i == player1.getPosition())
 				{
-					obstacleField += "1_ ";
+					obstacleField += " 1 ";
 				} else if (i == player2.getPosition())
 				{
 					obstacleField += " 2 ";
@@ -412,7 +414,7 @@ public class Application
 
 				else
 				{
-					//TODO some obstacle seem to not exist
+					// TODO some obstacle seem to not exist
 					for (int j = 0; j < obstacle.size(); j++)
 					{
 
@@ -431,6 +433,17 @@ public class Application
 			}
 		}
 		return currentField + "\n" + obstacleField;
+	}
+
+	public static String debugObstacle()
+	{
+		String debug = "";
+		for (int i = 0; i < obstacle.size(); i++)
+		{
+			debug += i + ": " + obstacle.get(i).getPosition() + " " + obstacle.get(i).getLenght() + " "
+					+ obstacle.get(i).getSprite() + " "+ obstacle.get(i).getAllPosition()+"\n";
+		}
+		return debug;
 	}
 
 	public static void updateStatus(Characters currentCharacter)

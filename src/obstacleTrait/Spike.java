@@ -6,11 +6,12 @@ import environement.Obstacle;
 public class Spike extends Obstacle
 {
 
+	private static final String SPRITE = "* ";
 	public static final double SPIKE_DAMAGE = 3;
 	
 	public Spike()
 	{
-		super("* ");
+		super(SPRITE);
 	}
 
 	@Override

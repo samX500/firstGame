@@ -6,17 +6,18 @@ import environement.Obstacle;
 
 public class Mud extends Obstacle
 {
+	private static final String SPRITE = "~ ";
 
 	public Mud()
 	{
-		super("~ ");
+		super(SPRITE);
 	}
 
 	@Override
 	public void obstEffect(Characters currentCharacter)
 	{
 		currentCharacter.setStatus(StatusEnum.SLOWED);
-		
+
 	}
 
 }

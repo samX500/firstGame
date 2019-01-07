@@ -6,10 +6,11 @@ import environement.Obstacle;
 
 public class ToxicSwamp extends Obstacle
 {
-
+	private static final String SPRITE = "☣ ";
+	
 	public ToxicSwamp()
 	{
-		super("☣ ");
+		super(SPRITE);
 	}
 
 	@Override

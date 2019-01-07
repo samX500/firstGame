@@ -14,23 +14,23 @@ public class AI
 		aiMoveToOpponent(currentCharacter, otherCharacter);
 	}
 
-	public static void findObstacle()
-	{
-		for (int i = 0; i < Application.obstacle.size(); i++)
-		{
-			for (int j = 0; j < Application.obstacle.get(i).getLenght(); i++)
-			{
-				obstaclePosition.add(Application.obstacle.get(i).getAllPosition()[j]);
-			}
-		}
-	}
+//	public static void findObstacle()
+//	{
+//		for (int i = 0; i < Application.obstacle.size(); i++)
+//		{
+//			for (int j = 0; j < Application.obstacle.get(i).getLenght(); i++)
+//			{
+//				obstaclePosition.add(Application.obstacle.get(i).getAllPosition()[j]);
+//			}
+//		}
+//	}
 
 	public static boolean aiStandOn(int goal)
 	{
 		boolean standOn = true;
-		for (int j = 0; j < Application.obstacle.size(); j++)
+		for (int i = 0; i < Application.obstacle.size(); i++)
 		{
-			if (Application.obstacle.get(j).standOn(goal))
+			if (Application.obstacle.get(i).standOn(goal))
 			{
 				standOn = false;
 			}
@@ -40,15 +40,15 @@ public class AI
 
 	public static boolean aiPassTrough(Characters currentCharacter, int goal)
 	{
-		boolean standOn = true;
+		boolean passTrough = true;
 		for (int j = 0; j < Application.obstacle.size(); j++)
 		{
-			if (Application.obstacle.get(j).passTrough(currentCharacter, goal))
+			if (Application.obstacle.get(j).passTrough(currentCharacter, goal) > 0)
 			{
-				standOn = false;
+				passTrough = false;
 			}
 		}
-		return standOn;
+		return passTrough;
 	}
 
 	public static void aiMoveToOpponent(Characters currentCharacter, Characters otherCharacter)
