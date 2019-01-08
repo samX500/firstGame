@@ -4,15 +4,55 @@ import java.util.ArrayList;
 
 import application.Application;
 import environement.Obstacle;
+import environement.TurnManagement;
 
 public class AI
 {
-	private static ArrayList<Integer> obstaclePosition = new ArrayList<>();
 	public static int goal;
 
 	public static void aiTurn(Characters currentCharacter, Characters otherCharacter)
 	{
-		aiMoveToOpponent(currentCharacter, otherCharacter);
+		//TODO put a good order to this and add special attack condition
+		if (currentCharacter.getDistance(otherCharacter) == 0)
+		{
+			currentCharacter.grab(otherCharacter);
+		}
+		if (otherCharacter.getStatus(StatusEnum.STUNNED) && !otherCharacter.getStatus(StatusEnum.BLOCKING)
+				&& currentCharacter.attackHit(otherCharacter.getPosition()))
+		{
+			currentCharacter.attack(otherCharacter);
+		}
+			if (currentCharacter.attackHit(otherCharacter.getPosition())
+					&& otherCharacter.getHealth() < currentCharacter.getDamage() && otherCharacter.getArmor() == 0)
+			{
+				currentCharacter.attack(otherCharacter);
+			}
+		if ((otherCharacter.getName().equals("Assasin") || otherCharacter.getName().equals("Shieldman"))
+				&& otherCharacter.attackHit(currentCharacter.getPosition())
+				&& canEscape(currentCharacter, otherCharacter))
+		{
+			escape(currentCharacter, otherCharacter);
+		}
+		if ((otherCharacter.getDamage() > currentCharacter.getHealth()
+				&& otherCharacter.getDamage() > currentCharacter.getHealth() + currentCharacter.getHealing())
+				&& (currentCharacter.getArmor() < otherCharacter.getDamage() / 2)
+				&& TurnManagement.canHeal(currentCharacter.getFacing()))
+		{
+			currentCharacter.heals();
+		}
+		if (currentCharacter.attackHit(otherCharacter.getPosition()) && !otherCharacter.getStatus(StatusEnum.BLOCKING))
+		{
+			currentCharacter.attack(otherCharacter);
+		}
+		if (currentCharacter.getDistance(otherCharacter) > otherCharacter.getSpeed() * 2
+				&& otherCharacter.attackHit(currentCharacter.getPosition())
+				&& TurnManagement.canBlock(currentCharacter.getFacing()))
+		{
+			currentCharacter.block();
+		} else
+		{
+			aiMoveToOpponent(currentCharacter, otherCharacter);
+		}
 	}
 
 	public static boolean aiStandOn(int goal)
@@ -43,14 +83,16 @@ public class AI
 
 	public static void aiMoveToOpponent(Characters currentCharacter, Characters otherCharacter)
 	{
-		
 
 		if (currentCharacter.getPosition() > otherCharacter.getPosition())
 		{
 			if ((otherCharacter.getPosition() + currentCharacter.getRange()) >= (currentCharacter.getPosition()
 					- currentCharacter.getSpeed()))
 			{
-				goal = otherCharacter.getPosition() + currentCharacter.getRange();
+				goal = aiStandOn(otherCharacter.getPosition() + currentCharacter.getRange())
+						? otherCharacter.getPosition() + currentCharacter.getRange()
+						: currentCharacter.getPosition() - currentCharacter.getSpeed();
+				// goal = otherCharacter.getPosition() + currentCharacter.getRange();
 			} else
 			{
 				goal = currentCharacter.getPosition() - currentCharacter.getSpeed();
@@ -87,7 +129,6 @@ public class AI
 
 		} else
 		{
-			//TODO debug the backward thing
 			if ((otherCharacter.getPosition() - currentCharacter.getRange()) <= (currentCharacter.getPosition()
 					+ currentCharacter.getSpeed()))
 			{
@@ -123,9 +164,130 @@ public class AI
 				currentCharacter.jump(1);
 			} else
 			{
-				currentCharacter.moveForward(goal - currentCharacter.getPosition() - 1);
+				currentCharacter.moveBackward(goal - currentCharacter.getPosition() - 1);
 			}
 
 		}
+
+	}
+
+	public static void escape(Characters currentCharacter, Characters otherCharacter)
+	{
+		if (currentCharacter.getPosition() > otherCharacter.getPosition())
+		{
+			if (aiStandOn(currentCharacter.getPosition() + currentCharacter.getSpeed()))
+			{
+				currentCharacter.jump(1);
+			} else
+			{
+				int mouvement = 0;
+				boolean exitLoop = false;
+				while ((aiStandOn(currentCharacter.getPosition() + mouvement + 1)) && !exitLoop)
+				{
+					if (mouvement >= currentCharacter.getSpeed())
+					{
+						exitLoop = true;
+					} else
+					{
+						mouvement++;
+					}
+				}
+				if (currentCharacter.getPosition() + mouvement > otherCharacter.getPosition()
+						+ otherCharacter.getRange())
+				{
+					currentCharacter.moveBackward(mouvement);
+				}
+
+			}
+		} else
+		{
+			if (aiStandOn(currentCharacter.getPosition() - currentCharacter.getSpeed()))
+			{
+				currentCharacter.jump(0);
+			} else
+			{
+				int mouvement = 0;
+				boolean exitLoop = false;
+				while ((aiStandOn(currentCharacter.getPosition() - mouvement - 1)) && !exitLoop)
+				{
+					if (mouvement >= currentCharacter.getSpeed())
+					{
+						exitLoop = true;
+					} else
+					{
+						mouvement++;
+					}
+				}
+				if (currentCharacter.getPosition() - mouvement > otherCharacter.getPosition()
+						- otherCharacter.getRange())
+				{
+					currentCharacter.moveForward(mouvement);
+				}
+			}
+		}
+	}
+
+	public static boolean canEscape(Characters currentCharacter, Characters otherCharacter)
+	{
+		boolean canEscape;
+		if (currentCharacter.getPosition() > otherCharacter.getPosition())
+		{
+			if (aiStandOn(currentCharacter.getPosition() + currentCharacter.getSpeed()))
+			{
+				canEscape = true;
+			} else
+			{
+				int mouvement = 0;
+				boolean exitLoop = false;
+				while ((aiStandOn(currentCharacter.getPosition() + mouvement + 1)) && !exitLoop)
+				{
+					if (mouvement >= currentCharacter.getSpeed())
+					{
+						exitLoop = true;
+					} else
+					{
+						mouvement++;
+					}
+				}
+				if (currentCharacter.getPosition() + mouvement > otherCharacter.getPosition()
+						+ otherCharacter.getRange())
+				{
+					canEscape = true;
+				} else
+				{
+					canEscape = false;
+				}
+			}
+		} else
+		{
+			if (aiStandOn(currentCharacter.getPosition() - currentCharacter.getSpeed()))
+			{
+				canEscape = true;
+			} else
+			{
+				int mouvement = 0;
+				boolean exitLoop = false;
+				while ((aiStandOn(currentCharacter.getPosition() - mouvement - 1)) && !exitLoop)
+				{
+					if (mouvement >= currentCharacter.getSpeed())
+					{
+						exitLoop = true;
+					} else
+					{
+						mouvement++;
+					}
+				}
+				if (currentCharacter.getPosition() - mouvement > otherCharacter.getPosition()
+						- otherCharacter.getRange())
+				{
+					canEscape = true;
+				} else
+				{
+					canEscape = false;
+				}
+			}
+		}
+
+		return canEscape;
 	}
 }
