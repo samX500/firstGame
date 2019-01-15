@@ -13,9 +13,10 @@ public class Shieldman extends Characters
 	private static final double HEALING = 5;
 	private static final double ARMOR = 30;
 	private static final double DAMAGE = 15;
+
 	public Shieldman(boolean pFacing, int pPosition)
 	{
-		super(NAME, RANGE,SPEED, MAX_HEALTH, HEALING,ARMOR, DAMAGE, pFacing, pPosition);
+		super(NAME, RANGE, SPEED, MAX_HEALTH, HEALING, ARMOR, DAMAGE, pFacing, pPosition);
 	}
 
 	@Override
@@ -25,12 +26,16 @@ public class Shieldman extends Characters
 		{
 			if (otherCharacter.getStatus(StatusEnum.BLOCKING))
 			{
-				setDamage(getDamage()*2);
+				setDamage(getDamage() * 2);
 				otherCharacter.removeStatus(StatusEnum.BLOCKING);
 				otherCharacter.removeStatus(StatusEnum.STUNNED);
+				attack(otherCharacter);
+				setDamage(getDamage() / 2);
+			} else
+			{
+				attack(otherCharacter);
 			}
-			attack(otherCharacter);
-			setDamage(getDamage()/2);
+
 		}
 	}
 }

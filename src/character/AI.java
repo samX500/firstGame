@@ -12,44 +12,134 @@ public class AI
 
 	public static void aiTurn(Characters currentCharacter, Characters otherCharacter)
 	{
-		//TODO put a good order to this and add special attack condition
-		if (currentCharacter.getDistance(otherCharacter) == 0)
+		// TODO put a good order to this and add special attack condition
+
+		// If next attack kill, attack
+		if (!otherCharacter.getStatus(StatusEnum.BLOCKING) && currentCharacter.attackHit(otherCharacter.getPosition())
+				&& canKill(currentCharacter.getDamage(), otherCharacter.getArmor(), otherCharacter.getHealth()))
 		{
-			currentCharacter.grab(otherCharacter);
+			currentCharacter.attack(otherCharacter);
 		}
-		if (otherCharacter.getStatus(StatusEnum.STUNNED) && !otherCharacter.getStatus(StatusEnum.BLOCKING)
+		// if next attack kill && am Alch
+		else if (currentCharacter.getName().equals("Alchemist")
+				&& currentCharacter.attackHit(otherCharacter.getPosition())
+				&& canKill(currentCharacter.getDamage(), otherCharacter.getArmor(), otherCharacter.getHealth()))
+		{
+			currentCharacter.attack(otherCharacter);
+		}
+		// if special kill && swordsman
+		else if (!otherCharacter.getStatus(StatusEnum.BLOCKING) && currentCharacter.getName().equals("Swordsman")
+				&& TurnManagement.canSpecial(currentCharacter.getFacing())
+				&& currentCharacter.getDistance(otherCharacter) <= currentCharacter.getRange()
+						+ currentCharacter.getSpeed()
+				&& canKill(currentCharacter.getDamage() * 2, otherCharacter.getArmor(), otherCharacter.getHealth()))
+		{
+			currentCharacter.specialAttack(otherCharacter);
+		}
+		// if next attack kill && am Lancer
+		else if (TurnManagement.canSpecial(currentCharacter.getFacing())
+				&& !otherCharacter.getStatus(StatusEnum.BLOCKING)
+				&& (currentCharacter.getDistance(otherCharacter) <= 20)
+				&& canKill(currentCharacter.getDamage(), otherCharacter.getArmor(), otherCharacter.getHealth()))
+		{
+			currentCharacter.specialAttack(otherCharacter);
+		}
+		// If am assasin && enemie == stun, assasin.special
+		else if (currentCharacter.getName().equals("Assasin") && otherCharacter.getStatus(StatusEnum.STUNNED)
+				&& currentCharacter.attackHit(otherCharacter.getPosition()))
+		{
+			currentCharacter.specialAttack(otherCharacter);
+		}
+		// If enemie == stun, attack
+		else if (otherCharacter.getStatus(StatusEnum.STUNNED) && !otherCharacter.getStatus(StatusEnum.BLOCKING)
 				&& currentCharacter.attackHit(otherCharacter.getPosition()))
 		{
 			currentCharacter.attack(otherCharacter);
 		}
-			if (currentCharacter.attackHit(otherCharacter.getPosition())
-					&& otherCharacter.getHealth() < currentCharacter.getDamage() && otherCharacter.getArmor() == 0)
-			{
-				currentCharacter.attack(otherCharacter);
-			}
-		if ((otherCharacter.getName().equals("Assasin") || otherCharacter.getName().equals("Shieldman"))
+		// TODO to debug, might want to put this after grab
+		// If blocking go grab
+		else if (AIGrab(currentCharacter, otherCharacter))
+		{
+			moveTo(currentCharacter, otherCharacter, otherCharacter.getPosition());
+		}
+
+		// Grab
+		else if (currentCharacter.getDistance(otherCharacter) == 0)
+		{
+			currentCharacter.grab(otherCharacter);
+		}
+
+		// If you need to escape, escape
+		else if ((otherCharacter.getName().equals("Assasin") || otherCharacter.getName().equals("Shieldman"))
 				&& otherCharacter.attackHit(currentCharacter.getPosition())
 				&& canEscape(currentCharacter, otherCharacter))
 		{
 			escape(currentCharacter, otherCharacter);
 		}
-		if ((otherCharacter.getDamage() > currentCharacter.getHealth()
-				&& otherCharacter.getDamage() > currentCharacter.getHealth() + currentCharacter.getHealing())
-				&& (currentCharacter.getArmor() < otherCharacter.getDamage() / 2)
-				&& TurnManagement.canHeal(currentCharacter.getFacing()))
+		// swordsman special
+		else if (!otherCharacter.getStatus(StatusEnum.BLOCKING) && currentCharacter.getName().equals("Swordsman")
+				&& TurnManagement.canSpecial(currentCharacter.getFacing()) && currentCharacter
+						.getDistance(otherCharacter) <= currentCharacter.getRange() + currentCharacter.getSpeed())
 		{
-			currentCharacter.heals();
+			currentCharacter.specialAttack(otherCharacter);
 		}
-		if (currentCharacter.attackHit(otherCharacter.getPosition()) && !otherCharacter.getStatus(StatusEnum.BLOCKING))
+		// Shieldman special
+		else if (currentCharacter.getName().equals("ShieldMan")
+				&& TurnManagement.canSpecial(currentCharacter.getFacing())
+				&& currentCharacter.attackHit(otherCharacter.getPosition())
+				&& otherCharacter.getStatus(StatusEnum.BLOCKING))
+		{
+			currentCharacter.specialAttack(otherCharacter);
+		}
+		// Lanceman special
+		else if (currentCharacter.getName().equals("LanceMan") && currentCharacter.getDistance(otherCharacter) <= 20
+				&& currentCharacter.getDistance(otherCharacter) > otherCharacter.getSpeed())
+		{
+			currentCharacter.specialAttack(otherCharacter);
+		}
+
+		// Archer special
+		else if (currentCharacter.getDistance(otherCharacter) <= 3 && currentCharacter.getName().equals("Archer")
+				&& TurnManagement.canSpecial(currentCharacter.getFacing()))
+		{
+			currentCharacter.specialAttack(otherCharacter);
+		}
+		// Alchemist special
+		else if (currentCharacter.attackHit(otherCharacter.getPosition())
+				&& currentCharacter.getName().equals("Alchemist")
+				&& TurnManagement.canSpecial(currentCharacter.getFacing()))
+		{
+			currentCharacter.specialAttack(otherCharacter);
+		}
+		// Alchemist || assasin attack
+		else if (currentCharacter.attackHit(otherCharacter.getPosition())
+				&& (currentCharacter.getName().equals("Alchemist") || currentCharacter.getName().equals("Assasin")))
 		{
 			currentCharacter.attack(otherCharacter);
 		}
-		if (currentCharacter.getDistance(otherCharacter) > otherCharacter.getSpeed() * 2
+		// Normal atack
+		else if (currentCharacter.attackHit(otherCharacter.getPosition())
+				&& !otherCharacter.getStatus(StatusEnum.BLOCKING))
+		{
+			currentCharacter.attack(otherCharacter);
+		}
+		// Heal
+		else if (TurnManagement.canHeal(currentCharacter.getFacing())
+				&& (currentCharacter.getHealth() < currentCharacter.getMaxHealth())
+				&& (!otherCharacter.attackHit(currentCharacter.getPosition())
+						|| (currentCharacter.getHealing() > otherCharacter.getDamage())))
+		{
+			currentCharacter.heals();
+		}
+		// Block
+		else if (currentCharacter.getDistance(otherCharacter) > otherCharacter.getSpeed()
 				&& otherCharacter.attackHit(currentCharacter.getPosition())
 				&& TurnManagement.canBlock(currentCharacter.getFacing()))
 		{
 			currentCharacter.block();
-		} else
+		}
+		// Move to the opponents
+		else
 		{
 			aiMoveToOpponent(currentCharacter, otherCharacter);
 		}
@@ -171,6 +261,53 @@ public class AI
 
 	}
 
+	public static boolean AIGrab(Characters currentCharacter, Characters otherCharacter)
+	{
+		boolean goGrab = false;
+
+		if (otherCharacter.getStatus(StatusEnum.BLOCKING)
+				&& currentCharacter.getDistance(otherCharacter) <= currentCharacter.getSpeed()
+				&& (Characters.statusObject.get(1)
+						.getTurnGotten(currentCharacter.getFacing()) == (TurnManagement.getTurn() - 1)))
+		{
+			if (currentCharacter.getDistance(otherCharacter) == currentCharacter.getPosition())
+			{
+				goGrab = true;
+			} else if (aiPassTrough(currentCharacter, otherCharacter.getPosition()))
+			{
+				goGrab = true;
+			} else if (currentCharacter.getHealth() > 9)
+			{
+				goGrab = true;
+			}
+		}
+
+		return goGrab;
+	}
+
+	public static void moveTo(Characters currentCharacter, Characters otherCharacter, int goal)
+	{
+		if (currentCharacter.getPosition() > otherCharacter.getPosition())
+		{
+			if (goal == currentCharacter.getPosition() - currentCharacter.getSpeed())
+			{
+				currentCharacter.jump(0);
+			} else
+			{
+				currentCharacter.moveForward(currentCharacter.getPosition() - goal);
+			}
+		} else
+		{
+			if (goal == currentCharacter.getPosition() + currentCharacter.getSpeed())
+			{
+				currentCharacter.jump(1);
+			} else
+			{
+				currentCharacter.moveBackward(goal - currentCharacter.getPosition());
+			}
+		}
+	}
+
 	public static void escape(Characters currentCharacter, Characters otherCharacter)
 	{
 		if (currentCharacter.getPosition() > otherCharacter.getPosition())
@@ -289,5 +426,26 @@ public class AI
 		}
 
 		return canEscape;
+	}
+
+	public static boolean canKill(double damage, double armor, double health)
+	{
+		boolean canKill = false;
+		double reducedHit = damage / 2;
+		if (damage > armor * 2)
+		{
+
+			if (!Characters.validateArmor(armor - reducedHit))
+			{
+				reducedHit -= armor;
+				if (reducedHit * 2 >= health)
+				{
+					canKill = true;
+				}
+			}
+
+		}
+
+		return canKill;
 	}
 }

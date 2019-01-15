@@ -44,7 +44,7 @@ public abstract class Characters
 	private int position;
 	private double health;
 	private ArrayList<StatusEnum> status = new ArrayList<>();
-	private static ArrayList<Status> statusObject = new ArrayList<>();
+	protected static ArrayList<Status> statusObject = new ArrayList<>();
 
 	public Characters()
 	{
@@ -198,7 +198,7 @@ public abstract class Characters
 		}
 	}
 
-	private boolean validateArmor(double pArmor)
+	protected static boolean validateArmor(double pArmor)
 	{
 		return pArmor >= MIN_ARMOR && pArmor <= MAX_ARMOR;
 	}
@@ -216,7 +216,7 @@ public abstract class Characters
 		}
 	}
 
-	private boolean validateDamage(double pDamage)
+	public static boolean validateDamage(double pDamage)
 	{
 		return pDamage >= MIN_DAMAGE && pDamage <= MAX_DAMAGE;
 	}
@@ -311,7 +311,6 @@ public abstract class Characters
 	{
 		for(int i = 0; i < StatusEnum.values().length; i++)
 		{
-			
 			statusObject.add(new Status(StatusEnum.values()[i]));
 		}
 	}

@@ -25,7 +25,7 @@ public class LanceMan extends Characters
 		{
 			setRange(20);
 			attack(otherCharacter);
-			setRange(5);
+			setRange(RANGE);
 			setStatus(StatusEnum.STUNNED);
 		}
 	}

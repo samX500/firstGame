@@ -25,7 +25,6 @@ public class Alchemist extends Characters
 		if (attackHit(otherCharacter.getPosition()))
 		{
 			otherCharacter.takeDamage(getDamage());
-			otherCharacter.setStatus(StatusEnum.POISONED);
 		}
 	}
 
