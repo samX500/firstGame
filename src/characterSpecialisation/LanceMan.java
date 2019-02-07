@@ -21,8 +21,9 @@ public class LanceMan extends Characters
 	@Override
 	public void specialAttack(Characters otherCharacter)
 	{
-		if (TurnManagement.canBeSpecialing(getFacing()))
+		if (TurnManagement.canSpecial(getFacing()))
 		{
+			TurnManagement.setLastSpecial(getFacing());
 			setRange(20);
 			attack(otherCharacter);
 			setRange(RANGE);

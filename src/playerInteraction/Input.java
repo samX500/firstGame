@@ -6,9 +6,15 @@ public class Input
 {
 	public static int askInt(String pQuestion)
 	{
-		//TODO add condition
+		String answerString;
 		int answer;
-		answer = Integer.parseInt(JOptionPane.showInputDialog(null, pQuestion));
+		answerString = JOptionPane.showInputDialog(null, pQuestion);
+		if(answerString == null)
+		{
+			Output.message("The program will stop");
+			System.exit(0);
+		}
+		answer = Integer.parseInt(answerString);
 		return answer;
 	}
 }

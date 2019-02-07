@@ -49,8 +49,9 @@ public class Archer extends Characters
 	@Override
 	public void specialAttack(Characters otherCharacter)
 	{
-		if (TurnManagement.canBeSpecialing(getFacing()))
+		if (TurnManagement.canSpecial(getFacing()))
 		{
+			TurnManagement.setLastSpecial(getFacing());
 			if (getDistance(otherCharacter) <= 3)
 			{
 				int knocback = (getPosition() < otherCharacter.getPosition()) ? (otherCharacter.getPosition() + 5)

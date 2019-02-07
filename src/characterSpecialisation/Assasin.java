@@ -30,8 +30,9 @@ private static final double DAMAGE = 0;
 	public void specialAttack(Characters otherCharacter)
 	{
 
-		if (TurnManagement.canBeSpecialing(getFacing()))
+		if (TurnManagement.canSpecial(getFacing()))
 		{
+			TurnManagement.setLastSpecial(getFacing());
 			if (otherCharacter.getStatus(StatusEnum.STUNNED) && attackHit(otherCharacter.getPosition()))
 			{
 				otherCharacter.changeHealth(-otherCharacter.getMaxHealth());

@@ -31,8 +31,9 @@ public class Alchemist extends Characters
 	@Override
 	public void specialAttack(Characters otherCharacter)
 	{
-		if (TurnManagement.canBeSpecialing(getFacing()))
+		if (TurnManagement.canSpecial(getFacing()))
 		{
+			TurnManagement.setLastSpecial(getFacing());
 			if (attackHit(otherCharacter.getPosition()))
 			{
 				otherCharacter.takeDamage(getDamage());

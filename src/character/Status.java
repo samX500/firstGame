@@ -31,7 +31,6 @@ public class Status
 
 	public void setTurnGotten(boolean facing, int pTurnGotten)
 	{
-		// TODO this can probably be done better
 		if (facing)
 		{
 			turnGottenP1 = pTurnGotten;

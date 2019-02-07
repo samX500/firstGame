@@ -1,8 +1,5 @@
 package environement;
 
-import character.Characters;
-import character.StatusEnum;
-
 public class TurnManagement
 {
 	private static int lastHealP1 = -10;
@@ -20,7 +17,8 @@ public class TurnManagement
 		{
 			lastHealP1 = currentTurn;
 
-		} else
+		}
+		else
 		{
 			lastHealP2 = currentTurn;
 		}
@@ -29,14 +27,8 @@ public class TurnManagement
 
 	public static boolean canHeal(boolean pFacing)
 	{
-		return pFacing ? currentTurn > (lastHealP1 + 2) : currentTurn > (lastHealP2 + 2);
-	}
-
-	public static boolean canBeHealing(boolean pFacing)
-	{
-		boolean canHeal = canHeal(pFacing);
-		setLastHeal(pFacing);
-		return canHeal;
+		return pFacing ? currentTurn > (lastHealP1 + 2)
+				: currentTurn > (lastHealP2 + 2);
 	}
 
 	public static void setLastBlock(boolean pFacing)
@@ -44,8 +36,8 @@ public class TurnManagement
 		if (pFacing)
 		{
 			lastBlockP1 = currentTurn;
-
-		} else
+		}
+		else
 		{
 			lastBlockP2 = currentTurn;
 		}
@@ -54,14 +46,8 @@ public class TurnManagement
 
 	public static boolean canBlock(boolean pFacing)
 	{
-		return pFacing ? currentTurn > (lastBlockP1 + 2) : currentTurn > (lastBlockP2 + 2);
-	}
-
-	public static boolean canBeBlocking(boolean pFacing)
-	{
-		boolean canBlock = canBlock(pFacing);
-		setLastBlock(pFacing);
-		return canBlock;
+		return pFacing ? currentTurn > (lastBlockP1 + 2)
+				: currentTurn > (lastBlockP2 + 2);
 	}
 
 	public static void setLastSpecial(boolean pFacing)
@@ -70,7 +56,8 @@ public class TurnManagement
 		{
 			lastSpecialP1 = currentTurn;
 
-		} else
+		}
+		else
 		{
 			lastSpecialP2 = currentTurn;
 		}
@@ -79,14 +66,8 @@ public class TurnManagement
 
 	public static boolean canSpecial(boolean pFacing)
 	{
-		return pFacing ? currentTurn > (lastSpecialP1 + 6) : currentTurn > (lastSpecialP2 + 6);
-	}
-
-	public static boolean canBeSpecialing(boolean pFacing)
-	{
-		boolean canSpecial = canSpecial(pFacing);
-		setLastSpecial(pFacing);
-		return canSpecial;
+		return pFacing ? currentTurn > (lastSpecialP1 + 6)
+				: currentTurn > (lastSpecialP2 + 6);
 	}
 
 	public static void newTurn()

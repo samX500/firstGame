@@ -43,12 +43,12 @@ public abstract class Obstacle
 		lenght = (int) (Math.random() * (MAX_LENGHT - MIN_LENGHT + 1) + MIN_LENGHT);
 	}
 
-	public String getAllPosition()
+	public int[] getAllPosition()
 	{
-		String pAllPosition = "";
+		int[] pAllPosition = new int[lenght];
 		for(int i = 0; i < lenght;i++)
 		{
-			pAllPosition += allPosition[i] + ", ";
+			pAllPosition[i] = allPosition[i];
 		}
 		return pAllPosition;
 	}

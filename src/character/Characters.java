@@ -9,16 +9,6 @@ import application.Application;
 
 public abstract class Characters
 {
-	private static final String DEFAULT_NAME = "Farmer";
-	private static final int DEFAULT_RANGE = 2;
-	private static final int DEFAULT_SPEED = 2;
-	private static final int DEFAULT_POSITION = 0;
-	private static final double DEFAULT_MAX_HEALTH = 20;
-	private static final int DEFAULT_HEALING = 5;
-	private static final int DEFAULT_ARMOR = 5;
-	private static final double DEFAULT_DAMAGE = 5;
-	private static final boolean DEFAULT_FACING = true;
-
 	private static final int MIN_RANGE = 0;
 	private static final int MAX_RANGE = 50;
 	private static final int MIN_SPEED = 0;
@@ -46,12 +36,6 @@ public abstract class Characters
 	private ArrayList<StatusEnum> status = new ArrayList<>();
 	protected static ArrayList<Status> statusObject = new ArrayList<>();
 
-	public Characters()
-	{
-		this(DEFAULT_NAME, DEFAULT_RANGE, DEFAULT_SPEED, DEFAULT_MAX_HEALTH, DEFAULT_HEALING, DEFAULT_ARMOR,
-				DEFAULT_DAMAGE, DEFAULT_FACING, DEFAULT_POSITION);
-	}
-
 	public Characters(String pName, int pRange, int pSpeed, double pMaxHealth, double pHealing, double pArmor,
 			double pDamage, boolean pFacing, int pPosition)
 	{
@@ -75,23 +59,6 @@ public abstract class Characters
 			setHealth(pMaxHealth);
 			setPosition(pPosition);
 			
-
-		} else
-		{
-			setName(DEFAULT_NAME);
-			setRange(DEFAULT_RANGE);
-			setSpeed(DEFAULT_SPEED);
-			setMaxHealth(DEFAULT_MAX_HEALTH);
-			setHealing(DEFAULT_HEALING);
-			setArmor(DEFAULT_ARMOR);
-			setDamage(DEFAULT_DAMAGE);
-			setFacing(DEFAULT_FACING);
-
-			setStatusObject();
-			setStatus(StatusEnum.NO_STATUS);
-			setHealth(DEFAULT_MAX_HEALTH);
-			setPosition(DEFAULT_POSITION);
-		
 		}
 	}
 
@@ -418,7 +385,7 @@ public abstract class Characters
 	{
 		int jumpSide = pJumpSide == 0 ? 1 : -1;
 		int direction = direction(facingRight);
-		if (Field.validatePosition(position + (speed * direction)))
+		if (Field.validatePosition(position + (speed * direction*jumpSide)))
 		{
 			setPosition(position + (speed * direction * jumpSide));
 		}
@@ -461,19 +428,21 @@ public abstract class Characters
 
 	public void heals()
 	{
-		if (TurnManagement.canBeHealing(facingRight))
+		if (TurnManagement.canHeal(facingRight))
 		{
 			changeHealth(healing);
+			TurnManagement.setLastHeal(facingRight);
 		}
 
 	}
 
 	public void block()
 	{
-		if (TurnManagement.canBeBlocking(facingRight))
+		if (TurnManagement.canBlock(facingRight))
 		{
 			setStatus(StatusEnum.BLOCKING);
 			setStatus(StatusEnum.STUNNED);
+			TurnManagement.setLastBlock(facingRight);
 		}
 	}
 
